@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import VueDrawingCanvas from "vue-drawing-canvas";
 
 const modeTxt = ref('Manual')
@@ -9,6 +9,19 @@ const image = ref("");
 const VueCanvasDrawing = ref(null);
 
 // бомбокляд
+
+const resizeCanvas = (): void => {
+  const canvasElem = <HTMLCanvasElement | null>document.getElementById("VueDrawingCanvas");
+  if (!canvasElem) {return}
+  canvasElem.width = window.innerWidth * 0.30;
+  canvasElem.height = window.innerWidth * 0.30;
+  console.log(canvasElem)
+}
+
+onMounted(() => {
+  resizeCanvas();
+  window.addEventListener("resize", resizeCanvas);
+})
 
 </script>
 
@@ -24,18 +37,19 @@ const VueCanvasDrawing = ref(null);
     </section>
     <section>
       <section class="canvas-seg">
-        <vue-drawing-canvas
-            ref="VueCanvasDrawing"
-            v-model:image="image"
-            :line="4"
-            :width="600"
-            :height="400"
-            :eraser="eraser"
-            :strokeType="line"
-            :line-cap="square"
-            :line-join="miter"
-            saveAs="png"/>
-        <!--        <canvas class="canvas"></canvas>-->
+        <div ref="canvasContainer" class="canvas-cont">
+          <vue-drawing-canvas
+              ref="VueCanvasDrawing"
+              v-model:image="image"
+              :line="4"
+              :width="550"
+              :height="550"
+              :eraser="eraser"
+              :strokeType="line"
+              :line-cap="square"
+              :line-join="miter"
+              saveAs="png"/>
+        </div>
       </section>
     </section>
   </main>
@@ -103,6 +117,14 @@ main {
     display: flex;
     flex-direction: row;
     justify-content: center;
+
+    width: 100%;
+
+    & .canvas-cont {
+      background-color: white;
+      width: 30vw;
+      height: 30vw;
+    }
   }
 }
 </style>

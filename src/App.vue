@@ -11,11 +11,21 @@ const VueCanvasDrawing = ref(null);
 // бомбокляд
 
 const resizeCanvas = (): void => {
+
+  console.log("hiya");
   const canvasElem = <HTMLCanvasElement | null>document.getElementById("VueDrawingCanvas");
   if (!canvasElem) {return}
+
+  const img = new Image();
+  img.src = image.value;
+
   canvasElem.width = window.innerWidth * 0.30;
   canvasElem.height = window.innerWidth * 0.30;
-  console.log(canvasElem)
+
+  const ctx = canvasElem.getContext('2d');
+
+  ctx?.clearRect(0, 0, canvasElem.width, canvasElem.height);
+  ctx?.drawImage(img, 0, 0);
 }
 
 onMounted(() => {

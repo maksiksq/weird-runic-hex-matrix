@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import {ref} from "vue";
+import VueDrawingCanvas from "vue-drawing-canvas";
 
 const modeTxt = ref('Manual')
+
+const image = ref("");
+
+const VueCanvasDrawing = ref(null);
 
 </script>
 
@@ -12,12 +17,23 @@ const modeTxt = ref('Manual')
     </section>
     <section class="button-seg">
       <button>{{ modeTxt }}</button>
-      <button>Clear</button>
+      <button @click="VueCanvasDrawing?.reset()">Clear</button>
       <button>Shut</button>
     </section>
     <section>
       <section class="canvas-seg">
-        <canvas class="canvas"></canvas>
+        <vue-drawing-canvas
+            ref="VueCanvasDrawing"
+            v-model:image="image"
+            :line="4"
+            :width="600"
+            :height="400"
+            :eraser="eraser"
+            :strokeType="dash"
+            :line-cap="square"
+            :line-join="bevel"
+            saveAs="png"/>
+        <!--        <canvas class="canvas"></canvas>-->
       </section>
     </section>
   </main>
@@ -49,6 +65,7 @@ button, a {
 
 main {
   height: 100%;
+
   & .text-head {
     padding-top: 6%;
 
@@ -60,6 +77,7 @@ main {
       font-size: 1rem;
     }
   }
+
   & .button-seg {
     padding-top: 6%;
 
@@ -78,6 +96,7 @@ main {
       background-color: oklch(0.6956 0.2047 20.75);
     }
   }
+
   & .canvas-seg {
     display: flex;
     flex-direction: row;

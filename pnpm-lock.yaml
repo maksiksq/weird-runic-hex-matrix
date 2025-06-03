@@ -30,6 +30,9 @@ importers:
       vite:
         specifier: ^6.0.3
         version: 6.3.5
+      vue-drawing-canvas:
+        specifier: ^1.0.14
+        version: 1.0.14(vue@3.5.16(typescript@5.6.3))
       vue-tsc:
         specifier: ^2.1.10
         version: 2.2.10(typescript@5.6.3)
@@ -576,6 +579,27 @@ packages:
   vscode-uri@3.1.0:
     resolution: {integrity: sha512-/BpdSx+yCQGnCvecbyXdxHDkuk55/G3xwnC0GqY4gmQ3j+A+g8kzzgB4Nk/SINjqn6+waqw3EgbVF2QKExkRxQ==}
 
+  vue-demi@0.14.10:
+    resolution: {integrity: sha512-nMZBOwuzabUO0nLgIcc6rycZEebF6eeUfaiQx9+WSk8e29IbLvPU9feI6tqW4kTo3hvoYAJkMh8n8D0fuISphg==}
+    engines: {node: '>=12'}
+    hasBin: true
+    peerDependencies:
+      '@vue/composition-api': ^1.0.0-rc.1
+      vue: ^3.0.0-0 || ^2.6.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+
+  vue-drawing-canvas@1.0.14:
+    resolution: {integrity: sha512-afsG6bGXD1DDP7pKslJX3LNLi07R/S97e/9/LNXnPZQBlsNnrL3T68rmodBHeMHr83onhMfym+t3kLkDuApW1Q==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      '@vue/composition-api': ^1.0.0-rc.1
+      vue: ^2.0.0 || ^3.0.5
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+
   vue-tsc@2.2.10:
     resolution: {integrity: sha512-jWZ1xSaNbabEV3whpIDMbjVSVawjAyW+x1n3JeGQo7S0uv2n9F/JMgWW90tGWNFRKya4YwKMZgCtr0vRAM7DeQ==}
     hasBin: true
@@ -1010,6 +1034,15 @@ snapshots:
       fsevents: 2.3.3
 
   vscode-uri@3.1.0: {}
+
+  vue-demi@0.14.10(vue@3.5.16(typescript@5.6.3)):
+    dependencies:
+      vue: 3.5.16(typescript@5.6.3)
+
+  vue-drawing-canvas@1.0.14(vue@3.5.16(typescript@5.6.3)):
+    dependencies:
+      vue: 3.5.16(typescript@5.6.3)
+      vue-demi: 0.14.10(vue@3.5.16(typescript@5.6.3))
 
   vue-tsc@2.2.10(typescript@5.6.3):
     dependencies:

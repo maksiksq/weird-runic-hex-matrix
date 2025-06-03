@@ -8,6 +8,8 @@ const image = ref("");
 
 const VueCanvasDrawing = ref(null);
 
+// бомбокляд
+
 </script>
 
 <template>

@@ -31,9 +31,9 @@ const VueCanvasDrawing = ref(null);
             :width="600"
             :height="400"
             :eraser="eraser"
-            :strokeType="dash"
+            :strokeType="line"
             :line-cap="square"
-            :line-join="bevel"
+            :line-join="miter"
             saveAs="png"/>
         <!--        <canvas class="canvas"></canvas>-->
       </section>

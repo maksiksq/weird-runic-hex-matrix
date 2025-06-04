@@ -106,7 +106,7 @@ main {
   height: 100%;
 
   & .text-head {
-    padding-top: 6%;
+    padding-top: 5%;
 
     display: flex;
     flex-direction: row;
@@ -118,7 +118,7 @@ main {
   }
 
   & .button-seg {
-    padding-top: 6%;
+    padding-top: 3%;
 
     width: 100%;
 
@@ -141,7 +141,7 @@ main {
     flex-direction: column;
     align-items: center;
 
-    padding-top: 6%;
+    padding-top: 3%;
 
     width: 100%;
 
@@ -150,12 +150,26 @@ main {
       flex-direction: row;
       justify-content: flex-start;
 
-      & input {
+      width: 30vw;
 
+      & input, select {
+        border-radius: 0;
+        border: solid black 1px;
+      }
+
+      & select {
+        color: black;
+
+
+        & option {
+          color: black;
+        }
       }
     }
 
     & .canvas-cont {
+      border: solid black 2px;
+
       background-color: white;
       width: 30vw;
       height: 30vw;

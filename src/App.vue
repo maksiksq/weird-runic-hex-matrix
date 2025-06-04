@@ -29,6 +29,7 @@ const resizeCanvas = (): void => {
 }
 
 const color = ref<string>()
+const eraser = ref<boolean>(false);
 
 onMounted(() => {
   resizeCanvas();
@@ -49,6 +50,13 @@ onMounted(() => {
     </section>
     <section>
       <section class="canvas-seg">
+        <div class="toolbar">
+          <input type="color" v-model="color">
+          <select @click="console.log(eraser); console.log('eeeeeeeee')" v-model="eraser">
+            <option :value=false>Brush</option>
+            <option :value=true>Eraser</option>
+          </select>
+        </div>
         <div ref="canvasContainer" class="canvas-cont">
           <vue-drawing-canvas
               ref="VueCanvasDrawing"
@@ -62,7 +70,6 @@ onMounted(() => {
               :line-join="miter"
               saveAs="png"/>
         </div>
-        <input type="color" v-model="color">
       </section>
     </section>
   </main>
@@ -128,10 +135,22 @@ main {
 
   & .canvas-seg {
     display: flex;
-    flex-direction: row;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+
+    padding-top: 6%;
 
     width: 100%;
+
+    & div {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+
+      & input {
+
+      }
+    }
 
     & .canvas-cont {
       background-color: white;

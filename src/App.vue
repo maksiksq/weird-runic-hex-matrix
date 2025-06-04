@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
 import VueDrawingCanvas from "vue-drawing-canvas";
 
 const modeTxt = ref('Manual')
 
 const image = ref("");
 
-const VueCanvasDrawing = ref(null);
+const VueCanvasDrawing = ref<VueDrawingCanvas>(null);
 
 // бомбокляд
 
@@ -27,6 +27,8 @@ const resizeCanvas = (): void => {
   ctx?.clearRect(0, 0, canvasElem.width, canvasElem.height);
   ctx?.drawImage(img, 0, 0);
 }
+
+const color = ref<string>()
 
 onMounted(() => {
   resizeCanvas();
@@ -53,13 +55,14 @@ onMounted(() => {
               v-model:image="image"
               :line="4"
               :width="550"
-              :height="550"
+              :color="color"
               :eraser="eraser"
               :strokeType="line"
               :line-cap="square"
               :line-join="miter"
               saveAs="png"/>
         </div>
+        <input type="color" v-model="color">
       </section>
     </section>
   </main>

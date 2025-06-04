@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onMounted, ref, watch} from "vue";
+import {onMounted, ref} from "vue";
 import VueDrawingCanvas from "vue-drawing-canvas";
 
 const modeTxt = ref('Manual')
@@ -11,13 +11,16 @@ const VueCanvasDrawing = ref<VueDrawingCanvas>(null);
 // бомбокляд
 
 const resizeCanvas = (): void => {
+  console.log("got here")
 
-  console.log("hiya");
   const canvasElem = <HTMLCanvasElement | null>document.getElementById("VueDrawingCanvas");
   if (!canvasElem) {return}
 
+  console.log(image.value);
   const img = new Image();
   img.src = image.value;
+  console.log(img.src);
+
 
   canvasElem.width = window.innerWidth * 0.30;
   canvasElem.height = window.innerWidth * 0.30;

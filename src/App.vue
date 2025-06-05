@@ -85,7 +85,7 @@ async function disconnectFromLock() {
 }
 
 const initiateBLE = async (): Promise<void> => {
-  disconnectFromLock();
+  await disconnectFromLock();
 
   await startScan((dv: BleDevice[]) => {devices.value = dv;}, 10000);
 }
@@ -102,12 +102,20 @@ watch(devices, async () => {
       statusMsg.value = "connected";
     }
     if (j.value === devices.value.length - 1) {
-      statusMsg.value = 'no matrix in the vicinity';
+      // nothing happens;
     }
     j.value += 1;
   }
 
   await sendString(CHARACTERISTIC_UUID, "on");
+})
+
+watch(connected, async () => {
+  if (connected.value) {
+    statusMsg.value = "connected";
+  } else {
+    statusMsg.value = "disconnected";
+  }
 })
 
 </script>

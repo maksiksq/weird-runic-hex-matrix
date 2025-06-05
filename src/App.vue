@@ -65,7 +65,7 @@ const status = ref<string>("disconnected")
       <h1>Weird runic hex matrix</h1>
     </section>
     <section class="status-line">
-      <p>{{ status }}</p>
+      <p>Status: {{ status }}</p>
     </section>
     <section class="button-seg">
       <button>{{ modeTxt }}</button>
@@ -89,9 +89,9 @@ const status = ref<string>("disconnected")
               :line="4"
               :color="color"
               :eraser="eraser"
-              :strokeType="line"
-              :line-cap="square"
-              :line-join="miter"
+              :strokeType="'line'"
+              :line-cap="'square'"
+              :line-join="'miter'"
               saveAs="png"/>
         </div>
       </section>

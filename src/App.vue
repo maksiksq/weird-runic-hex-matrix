@@ -1,30 +1,7 @@
 <script setup lang="ts">
 import {onMounted, ref, watch} from "vue";
 import VueDrawingCanvas from "vue-drawing-canvas";
-import {BleDevice, connect, sendString, startScan} from '@mnlphlp/plugin-blec'
-
-const devices = ref<BleDevice[]>([])
-
-watch(devices, async () => {
-
-  if (devices.value.length === 0) {
-      status.value = "scan resulted in nothing";
-  }
-
-  const j = ref(0);
-  for (const device of devices.value) {
-    if (device.name === "ESP32_LED_Control") {
-      await connect(device.address, () => console.warn('disconnected'));
-      status.value = "connected";
-    }
-    if (j.value === devices.value.length - 1) {
-      status.value = 'no matrix in the vicinity';
-    }
-    j.value += 1;
-  }
-
-  await sendString(CHARACTERISTIC_UUID, "on");
-})
+import {BleDevice, connect, sendString, startScan} from "@mnlphlp/plugin-blec";
 
 const modeTxt = ref('Manual')
 
@@ -82,7 +59,34 @@ onMounted(() => {
 const status = ref<string>("disconnected")
 
 const CHARACTERISTIC_UUID = '51FF12BB-3ED8-46E5-B4F9-D64E2FEC021B'
-await sendString(CHARACTERISTIC_UUID, 'on', 'withResponse')
+
+const devices = ref<BleDevice[]>([])
+
+
+const startBLEScan = async (): Promise<void> => {
+  await startScan((dv: BleDevice[]) => {devices.value = dv;}, 10000);
+}
+
+watch(devices, async () => {
+
+  if (devices.value.length === 0) {
+    status.value = "scan resulted in nothing";
+  }
+
+  const j = ref(0);
+  for (const device of devices.value) {
+    if (device.name === "ESP32_LED_Control") {
+      await connect(device.address, () => console.warn('disconnected'));
+      status.value = "connected";
+    }
+    if (j.value === devices.value.length - 1) {
+      status.value = 'no matrix in the vicinity';
+    }
+    j.value += 1;
+  }
+
+  await sendString(CHARACTERISTIC_UUID, "on");
+})
 
 </script>
 
@@ -97,7 +101,7 @@ await sendString(CHARACTERISTIC_UUID, 'on', 'withResponse')
     <section class="button-seg">
       <button>{{ modeTxt }}</button>
       <button @click.prevent="manuallyResetCanvas">Clear</button>
-      <button @click.prevent="await startScan((dv: BleDevice[]) => {devices.value = dv;}, 10000);">Connect</button>
+      <button @click.prevent="startBLEScan">Connect</button>
       <button @click.prevent="">Shut</button>
     </section>
     <section>

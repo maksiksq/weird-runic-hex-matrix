@@ -150,9 +150,9 @@ watch(connected, async () => {
               :line="4"
               :color="color"
               :eraser="eraser"
-              :strokeType="'line'"
-              :line-cap="'square'"
-              :line-join="'miter'"
+              :strokeType="line"
+              :line-cap="square"
+              :line-join="miter"
               saveAs="png"/>
         </div>
       </section>

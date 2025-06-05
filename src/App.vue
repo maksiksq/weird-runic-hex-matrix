@@ -1,7 +1,15 @@
 <script setup lang="ts">
 import {onMounted, ref, watch} from "vue";
 import VueDrawingCanvas from "vue-drawing-canvas";
-import {BleDevice, connect, sendString, startScan} from "@mnlphlp/plugin-blec";
+import {
+  BleDevice,
+  connect,
+  disconnect,
+  getConnectionUpdates,
+  getScanningUpdates,
+  sendString,
+  startScan
+} from "@mnlphlp/plugin-blec";
 
 const modeTxt = ref('Manual')
 
@@ -49,38 +57,52 @@ const manuallyResetCanvas = (): void => {
 const color = ref<string>()
 const eraser = ref<boolean>(false);
 
-onMounted(() => {
+onMounted(async () => {
+  await getConnectionUpdates((state) => connected.value = state)
+  await getScanningUpdates((state) => {
+    scanning.value = state
+  })
+
   resizeCanvas();
   window.addEventListener("resize", resizeCanvas);
 })
 
 //
 
-const status = ref<string>("disconnected")
+const connected = ref<Boolean>(false)
+const scanning = ref<Boolean>(false)
+const statusMsg = ref<string>("disconnected")
 
-const CHARACTERISTIC_UUID = '51FF12BB-3ED8-46E5-B4F9-D64E2FEC021B'
+const CHARACTERISTIC_UUID = 'beb5483e-36e1-4688-b7f5-ea07361b26a8'
 
 const devices = ref<BleDevice[]>([])
 
+async function disconnectFromLock() {
+  // disconnecting past connection in case it was connected
+  if (connected.value) {
+    await disconnect()
+  }
+}
 
-const startBLEScan = async (): Promise<void> => {
+const initiateBLE = async (): Promise<void> => {
+  disconnectFromLock();
+
   await startScan((dv: BleDevice[]) => {devices.value = dv;}, 10000);
 }
 
 watch(devices, async () => {
-
   if (devices.value.length === 0) {
-    status.value = "scan resulted in nothing";
+    statusMsg.value = "scan resulted in nothing";
   }
 
   const j = ref(0);
   for (const device of devices.value) {
     if (device.name === "ESP32_LED_Control") {
       await connect(device.address, () => console.warn('disconnected'));
-      status.value = "connected";
+      statusMsg.value = "connected";
     }
     if (j.value === devices.value.length - 1) {
-      status.value = 'no matrix in the vicinity';
+      statusMsg.value = 'no matrix in the vicinity';
     }
     j.value += 1;
   }
@@ -96,12 +118,12 @@ watch(devices, async () => {
       <h1>Weird runic hex matrix</h1>
     </section>
     <section class="status-line">
-      <p>Status: {{ status }}</p>
+      <p>Status: {{ statusMsg }}</p>
     </section>
     <section class="button-seg">
       <button>{{ modeTxt }}</button>
       <button @click.prevent="manuallyResetCanvas">Clear</button>
-      <button @click.prevent="startBLEScan">Connect</button>
+      <button @click.prevent="initiateBLE">Connect</button>
       <button @click.prevent="">Shut</button>
     </section>
     <section>

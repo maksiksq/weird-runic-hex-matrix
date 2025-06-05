@@ -132,7 +132,7 @@ watch(connected, async () => {
       <button>{{ modeTxt }}</button>
       <button @click.prevent="manuallyResetCanvas">Clear</button>
       <button @click.prevent="initiateBLE">Connect</button>
-      <button @click.prevent="">Shut</button>
+      <button @click.prevent="async () => {await sendString(CHARACTERISTIC_UUID, 'abracadabra');}">Shut</button>
     </section>
     <section>
       <section class="canvas-seg">

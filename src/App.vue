@@ -6,11 +6,13 @@ const modeTxt = ref('Manual')
 
 const image = ref("");
 
-const VueCanvas = ref<VueDrawingCanvas>(null);
+const vueCanvas = ref<VueDrawingCanvas>(null);
 
 // бомбокляд
 
 const resizeCanvas = (): void => {
+  console.log(vueCanvas.value);
+  console.log("aaa");
   // rip my reactivity
   const canvasElem = <HTMLCanvasElement | null>document.getElementById("VueDrawingCanvas");
   if (!canvasElem) {return}
@@ -29,7 +31,7 @@ const resizeCanvas = (): void => {
 }
 
 const manuallyResetCanvas = (): void => {
-  VueCanvas.value?.reset();
+  vueCanvas.value?.reset();
 
   const canvasElem = <HTMLCanvasElement | null>document.getElementById("VueDrawingCanvas");
   if (!canvasElem) {return}
@@ -82,10 +84,9 @@ const status = ref<string>("disconnected")
         </div>
         <div ref="canvasContainer" class="canvas-cont">
           <vue-drawing-canvas
-              ref="VueCanvas"
+              ref="vueCanvas"
               v-model:image="image"
               :line="4"
-              :width="550"
               :color="color"
               :eraser="eraser"
               :strokeType="line"
@@ -200,6 +201,11 @@ main {
       background-color: white;
       width: 30vw;
       height: 30vw;
+
+      & canvas {
+        width: 100%;
+        height: 100%;
+      }
     }
   }
 }

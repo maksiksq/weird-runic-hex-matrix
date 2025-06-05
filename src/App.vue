@@ -6,7 +6,7 @@ const modeTxt = ref('Manual')
 
 const image = ref("");
 
-const VueCanvasDrawing = ref<VueDrawingCanvas>(null);
+const VueCanvas = ref<VueDrawingCanvas>(null);
 
 // бомбокляд
 
@@ -29,21 +29,18 @@ const resizeCanvas = (): void => {
 }
 
 const manuallyResetCanvas = (): void => {
-  console.log("fire")
-  VueCanvasDrawing?.reset();
-  console.log("echo")
+  VueCanvas.value?.reset();
 
+  const canvasElem = <HTMLCanvasElement | null>document.getElementById("VueDrawingCanvas");
+  if (!canvasElem) {return}
 
-  // const canvasElem = <HTMLCanvasElement | null>document.getElementById("VueDrawingCanvas");
-  // if (!canvasElem) {return}
-  //
-  // const ctx = canvasElem.getContext('2d');
-  //
-  // if (!ctx) {return}
-  //
-  // ctx.fillStyle = '#fff';
-  // ctx.fillRect(0, 0, canvasElem.width, canvasElem.height);
-  // ctx.clearRect(0, 0, canvasElem.width, canvasElem.height);
+  const ctx = canvasElem.getContext('2d');
+
+  if (!ctx) {return}
+
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, canvasElem.width, canvasElem.height);
+  ctx.clearRect(0, 0, canvasElem.width, canvasElem.height);
 }
 
 const color = ref<string>()
@@ -70,7 +67,7 @@ const status = ref<string>("disconnected")
     </section>
     <section class="button-seg">
       <button>{{ modeTxt }}</button>
-      <button @click.prevent="VueCanvasDrawing?.reset()">Clear</button>
+      <button @click.prevent="manuallyResetCanvas">Clear</button>
       <button @click.prevent="">Connect</button>
       <button @click.prevent="">Shut</button>
     </section>
@@ -85,7 +82,7 @@ const status = ref<string>("disconnected")
         </div>
         <div ref="canvasContainer" class="canvas-cont">
           <vue-drawing-canvas
-              ref="VueCanvasDrawing"
+              ref="VueCanvas"
               v-model:image="image"
               :line="4"
               :width="550"

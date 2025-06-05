@@ -11,15 +11,12 @@ const VueCanvasDrawing = ref<VueDrawingCanvas>(null);
 // бомбокляд
 
 const resizeCanvas = (): void => {
-  console.log("got here")
-
+  // rip my reactivity
   const canvasElem = <HTMLCanvasElement | null>document.getElementById("VueDrawingCanvas");
   if (!canvasElem) {return}
 
-  console.log(image.value);
   const img = new Image();
   img.src = image.value;
-  console.log(img.src);
 
 
   canvasElem.width = window.innerWidth * 0.30;
@@ -31,6 +28,24 @@ const resizeCanvas = (): void => {
   ctx?.drawImage(img, 0, 0);
 }
 
+const manuallyResetCanvas = (): void => {
+  console.log("fire")
+  VueCanvasDrawing?.reset();
+  console.log("echo")
+
+
+  // const canvasElem = <HTMLCanvasElement | null>document.getElementById("VueDrawingCanvas");
+  // if (!canvasElem) {return}
+  //
+  // const ctx = canvasElem.getContext('2d');
+  //
+  // if (!ctx) {return}
+  //
+  // ctx.fillStyle = '#fff';
+  // ctx.fillRect(0, 0, canvasElem.width, canvasElem.height);
+  // ctx.clearRect(0, 0, canvasElem.width, canvasElem.height);
+}
+
 const color = ref<string>()
 const eraser = ref<boolean>(false);
 
@@ -39,6 +54,10 @@ onMounted(() => {
   window.addEventListener("resize", resizeCanvas);
 })
 
+//
+
+const status = ref<string>("disconnected")
+
 </script>
 
 <template>
@@ -46,16 +65,20 @@ onMounted(() => {
     <section class="text-head">
       <h1>Weird runic hex matrix</h1>
     </section>
+    <section class="status-line">
+      <p>{{ status }}</p>
+    </section>
     <section class="button-seg">
       <button>{{ modeTxt }}</button>
-      <button @click="VueCanvasDrawing?.reset()">Clear</button>
-      <button>Shut</button>
+      <button @click.prevent="VueCanvasDrawing?.reset()">Clear</button>
+      <button @click.prevent="">Connect</button>
+      <button @click.prevent="">Shut</button>
     </section>
     <section>
       <section class="canvas-seg">
         <div class="toolbar">
           <input type="color" v-model="color">
-          <select @click="console.log(eraser); console.log('eeeeeeeee')" v-model="eraser">
+          <select v-model="eraser">
             <option :value=false>Brush</option>
             <option :value=true>Eraser</option>
           </select>
@@ -105,14 +128,24 @@ button, a {
 main {
   height: 100%;
 
-  & .text-head {
-    padding-top: 5%;
-
+  section {
     display: flex;
     flex-direction: row;
     justify-content: center;
+  }
+
+  & .text-head {
+    padding-top: 5%;
 
     & h1 {
+      font-size: 1rem;
+    }
+  }
+
+  & .status-line {
+    padding-top: 1%;
+
+    & p {
       font-size: 1rem;
     }
   }
@@ -122,9 +155,6 @@ main {
 
     width: 100%;
 
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
     gap: 3vw;
 
     & button {

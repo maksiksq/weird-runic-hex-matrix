@@ -43,13 +43,6 @@ const resizeCanvas = (): void => {
 
   const uint8Array = new Uint8Array(imageData?.data.buffer);
   console.log(uint8Array);
-
-  const uint16Array = new Uint16Array(uint8Array.length);
-  for (let i = 0; i < uint8Array.length; i++) {
-    uint16Array[i] = uint8Array[i];
-  }
-
-  console.log(uint16Array);
 }
 
 const manuallyResetCanvas = (): void => {

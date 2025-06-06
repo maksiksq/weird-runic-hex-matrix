@@ -121,34 +121,70 @@ const sendCanvasImage = async () => {
 
   if (!ctx) {return}
 
-  const imageData = ctx?.getImageData(0, 0, canvasElem.width, canvasElem.height);
+  // const uint8Arr = new Uint8Array([
+  //   // Row 1
+  //   255, 0, 0, 255,   // Red
+  //   0, 255, 0, 255,   // Green
+  //   0, 0, 255, 255,   // Blue
+  //   255, 255, 0, 255, // Yellow
+  //   // Row 2
+  //   255, 0, 0, 255,   // Red
+  //   0, 255, 0, 255,   // Green
+  //   0, 0, 255, 255,   // Blue
+  //   255, 255, 0, 255, // Yellow
+  //   // Row 1
+  //   255, 0, 0, 255,   // Red
+  //   0, 255, 0, 255,   // Green
+  //   0, 0, 255, 255,   // Blue
+  //   255, 255, 0, 255, // Yellow
+  //   // Row 2
+  //   255, 0, 0, 255,   // Red
+  //   0, 255, 0, 255,   // Green
+  //   0, 0, 255, 255,   // Blue
+  //   255, 255, 0, 255, // Yellow
+  // ])
 
-  const uint8Arr = new Uint8Array([
-    // Row 1
-    255, 0, 0, 255,   // Red
-    0, 255, 0, 255,   // Green
-    0, 0, 255, 255,   // Blue
-    255, 255, 0, 255, // Yellow
-    // Row 2
-    255, 0, 0, 255,   // Red
-    0, 255, 0, 255,   // Green
-    0, 0, 255, 255,   // Blue
-    255, 255, 0, 255, // Yellow
-    // Row 1
-    255, 0, 0, 255,   // Red
-    0, 255, 0, 255,   // Green
-    0, 0, 255, 255,   // Blue
-    255, 255, 0, 255, // Yellow
-    // Row 2
-    255, 0, 0, 255,   // Red
-    0, 255, 0, 255,   // Green
-    0, 0, 255, 255,   // Blue
-    255, 255, 0, 255, // Yellow
-  ])
-  // const uint8Array = new Uint8Array(imageData?.data.buffer);
-  await info("haaaaaaaaaaapchoo");
-  await info(uint8Arr.toString());
+
+  // const { data } = ctx.getImageData(0, 0, canvasElem.width, canvasElem.height);
+  //
+  // const uint8Arr = new Uint8Array(data.buffer);
+  //
+  // await info("haaaaaaaaaaapchoo");
+  // await info(uint8Arr.toString());
+
+  const width = 16;
+  const height = 16;
+  const uint8Arr = new Uint8Array(width * height * 4);
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const offset = (y * width + x) * 4;
+      const isRedSquare = ((x >> 3) + (y >> 3)) % 2 === 0;
+
+      if (isRedSquare) {
+        // Red square
+        uint8Arr[offset] = 255;     // R
+        uint8Arr[offset + 1] = 0;   // G
+        uint8Arr[offset + 2] = 0;   // B
+        uint8Arr[offset + 3] = 255; // A (opaque)
+      } else {
+        // Green square
+        uint8Arr[offset] = 0;
+        uint8Arr[offset + 1] = 255;
+        uint8Arr[offset + 2] = 0;
+        uint8Arr[offset + 3] = 255;
+      }
+    }
+  }
+
+  info("aaaaa")
+  info(uint8Arr.toString())
+  info("aaaaa")
   await info("haaaaaaaaaaapchooo");
+  await info(uint8Arr.length.toString());
+  await info("haaaaaaaaaaapchooo");
+
+
   await send(CHARACTERISTIC_UUID, uint8Arr);
 }
 

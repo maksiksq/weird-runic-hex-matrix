@@ -130,7 +130,7 @@ class MyCharacteristicCallbacks : public BLECharacteristicCallbacks {
     Serial.printf("Received %d bytes\n", length);
 
     if (length >= 32) { 
-      for (size_t i = 0; i < 16; i++) {
+      for (size_t i = 0; i < 32; i++) {
         uint8_t r = data[i * 4 + 0];
         uint8_t g = data[i * 4 + 1];
         uint8_t b = data[i * 4 + 2];

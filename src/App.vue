@@ -10,6 +10,7 @@ import {
   sendString,
   startScan
 } from "@mnlphlp/plugin-blec";
+import {info} from "@tauri-apps/plugin-log";
 
 const modeTxt = ref('Manual')
 
@@ -20,8 +21,6 @@ const vueCanvas = ref<VueDrawingCanvas>(null);
 // бомбокляд
 
 const resizeCanvas = (): void => {
-  console.log(vueCanvas.value);
-  console.log("aaa");
   // rip my reactivity
   const canvasElem = <HTMLCanvasElement | null>document.getElementById("VueDrawingCanvas");
   if (!canvasElem) {return}
@@ -62,12 +61,10 @@ onMounted(async () => {
   resizeCanvas();
   window.addEventListener("resize", resizeCanvas);
 
-  console.log("haiiiiiiiiii");
   await getConnectionUpdates((state) => connected.value = state)
   await getScanningUpdates((state) => {
     scanning.value = state
   })
-  console.log("haiiiiiiiii22i");
 
 })
 
@@ -95,6 +92,8 @@ const initiateBLE = async (): Promise<void> => {
 }
 
 watch(devices, async () => {
+  console.log("haaaaaaaaaaapchoo");
+
   if (devices.value.length === 0) {
     statusMsg.value = "scan resulted in nothing";
   }
@@ -121,7 +120,10 @@ watch(devices, async () => {
   const imageData = ctx?.getImageData(0, 0, canvasElem.width, canvasElem.height);
 
   const uint8Array = new Uint8Array(imageData?.data.buffer);
-  await sendString(CHARACTERISTIC_UUID, "on");
+  console.log("haaaaaaaaaaapchoo");
+  console.log(uint8Array.toString());
+  console.log("haaaaaaaaaaapchooo");
+  await sendString(CHARACTERISTIC_UUID, uint8Array.toString());
 })
 
 watch(connected, async () => {
@@ -149,7 +151,7 @@ watch(connected, async () => {
       <button @click.prevent="manuallyResetCanvas">Clear</button>
       <button @click.prevent="initiateBLE">Connect</button>
       <button @click.prevent="async () => {await sendString(CHARACTERISTIC_UUID, 'abracadabra');}">Shut</button>
-      <button @click.prevent="resizeCanvas"></button>
+      <button @click.prevent="info('hapchooo')"></button>
     </section>
     <section>
       <section class="canvas-seg">

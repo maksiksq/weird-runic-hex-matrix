@@ -121,7 +121,7 @@ watch(devices, async () => {
   const imageData = ctx?.getImageData(0, 0, canvasElem.width, canvasElem.height);
 
   const uint8Array = new Uint8Array(imageData?.data.buffer);
-  await send(CHARACTERISTIC_UUID, uint8Array);
+  await sendString(CHARACTERISTIC_UUID, "on");
 })
 
 watch(connected, async () => {

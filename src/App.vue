@@ -35,8 +35,21 @@ const resizeCanvas = (): void => {
 
   const ctx = canvasElem.getContext('2d');
 
+
   ctx?.clearRect(0, 0, canvasElem.width, canvasElem.height);
   ctx?.drawImage(img, 0, 0);
+
+  const imageData = ctx?.getImageData(0, 0, canvasElem.width, canvasElem.height);
+
+  const uint8Array = new Uint8Array(imageData?.data.buffer);
+  console.log(uint8Array);
+
+  const uint16Array = new Uint16Array(uint8Array.length);
+  for (let i = 0; i < uint8Array.length; i++) {
+    uint16Array[i] = uint8Array[i];
+  }
+
+  console.log(uint16Array);
 }
 
 const manuallyResetCanvas = (): void => {
@@ -58,13 +71,16 @@ const color = ref<string>()
 const eraser = ref<boolean>(false);
 
 onMounted(async () => {
+  resizeCanvas();
+  window.addEventListener("resize", resizeCanvas);
+
+  console.log("haiiiiiiiiii");
   await getConnectionUpdates((state) => connected.value = state)
   await getScanningUpdates((state) => {
     scanning.value = state
   })
+  console.log("haiiiiiiiii22i");
 
-  resizeCanvas();
-  window.addEventListener("resize", resizeCanvas);
 })
 
 //
@@ -118,6 +134,8 @@ watch(connected, async () => {
   }
 })
 
+//
+
 </script>
 
 <template>
@@ -133,6 +151,7 @@ watch(connected, async () => {
       <button @click.prevent="manuallyResetCanvas">Clear</button>
       <button @click.prevent="initiateBLE">Connect</button>
       <button @click.prevent="async () => {await sendString(CHARACTERISTIC_UUID, 'abracadabra');}">Shut</button>
+      <button @click.prevent="resizeCanvas"></button>
     </section>
     <section>
       <section class="canvas-seg">

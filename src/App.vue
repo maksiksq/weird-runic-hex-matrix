@@ -134,6 +134,16 @@ const sendCanvasImage = async () => {
     0, 255, 0, 255,   // Green
     0, 0, 255, 255,   // Blue
     255, 255, 0, 255, // Yellow
+    // Row 1
+    255, 0, 0, 255,   // Red
+    0, 255, 0, 255,   // Green
+    0, 0, 255, 255,   // Blue
+    255, 255, 0, 255, // Yellow
+    // Row 2
+    255, 0, 0, 255,   // Red
+    0, 255, 0, 255,   // Green
+    0, 0, 255, 255,   // Blue
+    255, 255, 0, 255, // Yellow
   ])
   // const uint8Array = new Uint8Array(imageData?.data.buffer);
   await info("haaaaaaaaaaapchoo");

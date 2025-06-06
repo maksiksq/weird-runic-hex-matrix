@@ -110,6 +110,10 @@ watch(devices, async () => {
     j.value += 1;
   }
 
+  await sendCanvasImage()
+})
+
+const sendCanvasImage = async () => {
   const canvasElem = <HTMLCanvasElement | null>document.getElementById("VueDrawingCanvas");
   if (!canvasElem) {return}
 
@@ -119,12 +123,24 @@ watch(devices, async () => {
 
   const imageData = ctx?.getImageData(0, 0, canvasElem.width, canvasElem.height);
 
-  const uint8Array = new Uint8Array(imageData?.data.buffer);
-  console.log("haaaaaaaaaaapchoo");
-  console.log(uint8Array.toString());
-  console.log("haaaaaaaaaaapchooo");
-  await sendString(CHARACTERISTIC_UUID, uint8Array.toString());
-})
+  const uint8Arr = new Uint8Array([
+    // Row 1
+    255, 0, 0, 255,   // Red
+    0, 255, 0, 255,   // Green
+    0, 0, 255, 255,   // Blue
+    255, 255, 0, 255, // Yellow
+    // Row 2
+    255, 0, 0, 255,   // Red
+    0, 255, 0, 255,   // Green
+    0, 0, 255, 255,   // Blue
+    255, 255, 0, 255, // Yellow
+  ])
+  // const uint8Array = new Uint8Array(imageData?.data.buffer);
+  await info("haaaaaaaaaaapchoo");
+  await info(uint8Arr.toString());
+  await info("haaaaaaaaaaapchooo");
+  await send(CHARACTERISTIC_UUID, uint8Arr);
+}
 
 watch(connected, async () => {
   if (connected.value) {
@@ -152,6 +168,7 @@ watch(connected, async () => {
       <button @click.prevent="initiateBLE">Connect</button>
       <button @click.prevent="async () => {await sendString(CHARACTERISTIC_UUID, 'abracadabra');}">Shut</button>
       <button @click.prevent="info('hapchooo')"></button>
+      <button @click.prevent="sendCanvasImage">send</button>
     </section>
     <section>
       <section class="canvas-seg">

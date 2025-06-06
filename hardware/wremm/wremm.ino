@@ -119,17 +119,42 @@ bool runImage = false;
 class MyCharacteristicCallbacks : public BLECharacteristicCallbacks {
   void onWrite(BLECharacteristic *pCharacteristic) {
     String value = pCharacteristic->getValue();
-    Serial.println("Received command: " + value);
+    const uint8_t* data = (const uint8_t*)value.c_str();
+    size_t length = value.length();
 
-    if (value == "on") {
-      convertUint8ToUint16();
+    Serial.println("Received this initially:");
+    for (size_t i = 0; i < length; i++) {
+      Serial.printf("%2d: 0x%02X\n", i, data[i]);
+    }
+
+    Serial.printf("Received %d bytes\n", length);
+
+    if (length >= 32) { 
+      for (size_t i = 0; i < 16; i++) {
+        uint8_t r = data[i * 4 + 0];
+        uint8_t g = data[i * 4 + 1];
+        uint8_t b = data[i * 4 + 2];
+
+        // Convert to RGB565
+        uint16_t rgb565 = ((r & 0xF8) << 8) |
+                          ((g & 0xFC) << 3) |
+                          (b >> 3);
+
+        processedData[i] = rgb565;
+      }
+
+      // Print processed data
+      Serial.println("Processed data:");
+      for (size_t i = 0; i < 16; i++) {
+        Serial.printf("%2d: 0x%04X\n", i, processedData[i]);
+      }
+
       runImage = true;
-    } else if (value == "off") {
-      digitalWrite(LED_PIN, LOW);
+    } else {
+      Serial.println("Not enough data received.");
     }
   }
 };
-
 //
 
 //________________________________________________________________________________VOID SETUP()

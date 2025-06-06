@@ -6,7 +6,7 @@ import {
   connect,
   disconnect,
   getConnectionUpdates,
-  getScanningUpdates,
+  getScanningUpdates, send,
   sendString,
   startScan
 } from "@mnlphlp/plugin-blec";
@@ -38,11 +38,6 @@ const resizeCanvas = (): void => {
 
   ctx?.clearRect(0, 0, canvasElem.width, canvasElem.height);
   ctx?.drawImage(img, 0, 0);
-
-  const imageData = ctx?.getImageData(0, 0, canvasElem.width, canvasElem.height);
-
-  const uint8Array = new Uint8Array(imageData?.data.buffer);
-  console.log(uint8Array);
 }
 
 const manuallyResetCanvas = (): void => {
@@ -116,7 +111,17 @@ watch(devices, async () => {
     j.value += 1;
   }
 
-  await sendString(CHARACTERISTIC_UUID, "on");
+  const canvasElem = <HTMLCanvasElement | null>document.getElementById("VueDrawingCanvas");
+  if (!canvasElem) {return}
+
+  const ctx = canvasElem.getContext('2d');
+
+  if (!ctx) {return}
+
+  const imageData = ctx?.getImageData(0, 0, canvasElem.width, canvasElem.height);
+
+  const uint8Array = new Uint8Array(imageData?.data.buffer);
+  await send(CHARACTERISTIC_UUID, uint8Array);
 })
 
 watch(connected, async () => {

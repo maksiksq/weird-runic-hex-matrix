@@ -52,12 +52,25 @@ uint16_t myBLUE = dma_display->color565(0, 0, 255);
 
 // Image decl but yes
 
-uint8_t rawData[] = {0x01, 0x02, 0x03, 0x04};  // From JSON
-const size_t rawLength = sizeof(rawData);
-
-// Calculate number of 16-bit values
-size_t numU16 = rawLength / 2;
+uint8_t rawData[] = {0x01, 0x02, 0x03, 0x04}; 
 uint16_t processedData[2099];
+
+void convertUint8ToUint16() {
+  const size_t rawLength = sizeof(rawData);
+
+  // Calculate number of 16-bit values
+  size_t numU16 = rawLength / 2;
+
+  // conversion loop
+
+  for (size_t i = 0; i < numU16; i++) {
+    processedData[i] = (uint16_t)rawData[2 * i] | ((uint16_t)rawData[2 * i + 1] << 8);
+  }
+
+  for (size_t i = 0; i < numU16; i++) {
+    Serial.println(processedData[i], HEX);
+  }
+}
 
 //
 
@@ -70,7 +83,7 @@ uint16_t processedData[2099];
 #include <string>
 
 //
-// set to the built-in LED as of currently, change this if you're using this code
+// _ unused
 #define LED_PIN 25
 
 BLECharacteristic *pCharacteristic;
@@ -109,6 +122,7 @@ class MyCharacteristicCallbacks : public BLECharacteristicCallbacks {
     Serial.println("Received command: " + value);
 
     if (value == "on") {
+      convertUint8ToUint16();
       runImage = true;
     } else if (value == "off") {
       digitalWrite(LED_PIN, LOW);
@@ -186,16 +200,6 @@ void setup() {
   startAdvertising();
 
   Serial.println("Waiting for a client to connect...");
-
-  // conversion loop
-
-  for (size_t i = 0; i < numU16; i++) {
-    processedData[i] = (uint16_t)rawData[2 * i] | ((uint16_t)rawData[2 * i + 1] << 8);
-  }
-
-  for (size_t i = 0; i < numU16; i++) {
-    Serial.println(processedData[i], HEX);
-  }
 }
 //________________________________________________________________________________
 
@@ -255,7 +259,6 @@ void loop() {
   if (runImage) {
     dma_display->drawRGBBitmap(0, 0, processedData, 4, 4);
   }
-
 }
 //________________________________________________________________________________
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

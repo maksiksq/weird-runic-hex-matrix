@@ -6,3 +6,5 @@
 - [ ] BUG: (minor): ESP32 struggles to process first image if it's just been powered on (whatever sorta)
 - [ ] BUG: make image canvas an drawing canvas work together somehow
 - [ ] Add more functionality for drawing (size change in particular)
+- [ ] Real time
+- [ ] Maybe wi-fi?

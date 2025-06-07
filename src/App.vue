@@ -67,6 +67,9 @@ onMounted(async () => {
     scanning.value = state
   })
 
+  setInterval(async () => {
+    await sendCanvasImage();
+  }, 3000)
 })
 
 //

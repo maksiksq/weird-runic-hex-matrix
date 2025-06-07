@@ -11,6 +11,7 @@ import {
   startScan
 } from "@mnlphlp/plugin-blec";
 import {info} from "@tauri-apps/plugin-log";
+import pica from "pica"
 
 const modeTxt = ref('Manual')
 
@@ -118,73 +119,34 @@ const sendCanvasImage = async () => {
   if (!canvasElem) {return}
 
   const ctx = canvasElem.getContext('2d');
-
   if (!ctx) {return}
 
-  // const uint8Arr = new Uint8Array([
-  //   // Row 1
-  //   255, 0, 0, 255,   // Red
-  //   0, 255, 0, 255,   // Green
-  //   0, 0, 255, 255,   // Blue
-  //   255, 255, 0, 255, // Yellow
-  //   // Row 2
-  //   255, 0, 0, 255,   // Red
-  //   0, 255, 0, 255,   // Green
-  //   0, 0, 255, 255,   // Blue
-  //   255, 255, 0, 255, // Yellow
-  //   // Row 1
-  //   255, 0, 0, 255,   // Red
-  //   0, 255, 0, 255,   // Green
-  //   0, 0, 255, 255,   // Blue
-  //   255, 255, 0, 255, // Yellow
-  //   // Row 2
-  //   255, 0, 0, 255,   // Red
-  //   0, 255, 0, 255,   // Green
-  //   0, 0, 255, 255,   // Blue
-  //   255, 255, 0, 255, // Yellow
-  // ])
+  // downscaling the image
+  const dstCanvas = document.createElement('canvas');
+  dstCanvas.width = 32;
+  dstCanvas.height = 32;
 
+  await info("yeeeeeee");
+  await pica().resize(canvasElem, dstCanvas, {
+    quality: 3,
+    alpha: true,
+  });
+  await info("yeeeeeee");
 
-  const { data } = ctx.getImageData(0, 0, 32, 32);
+  const dstCtx = dstCanvas.getContext('2d');
+  if (!dstCtx) return;
 
-  const uint8Arr = new Uint8Array(data.buffer);
+  // converting image to a uint8Arr
+  const imageData = dstCtx.getImageData(0, 0, 64, 64);
+
+  const uint8Arr = new Uint8Array(imageData.data.buffer);
+
 
   await info("haaaaaaaaaaapchoo");
-  await info(uint8Arr.toString());
+  await info(`ImageData length: ${uint8Arr.length}`);
+
+  await info(`Ye: ${Array.from(uint8Arr.slice(0, 8)).join(', ')}`);
   await info("haaaaaaaaaaapchoo")
-
-  // const width = 64;
-  // const height = 64;
-  // const uint8Arr = new Uint8Array(width * height * 4);
-  //
-  // for (let y = 0; y < height; y++) {
-  //   for (let x = 0; x < width; x++) {
-  //     const offset = (y * width + x) * 4;
-  //     const isRedSquare = ((x >> 3) + (y >> 3)) % 2 === 0;
-  //
-  //     if (isRedSquare) {
-  //       // Red square
-  //       uint8Arr[offset] = 255;     // R
-  //       uint8Arr[offset + 1] = 0;   // G
-  //       uint8Arr[offset + 2] = 0;   // B
-  //       uint8Arr[offset + 3] = 255; // A (opaque)
-  //     } else {
-  //       // Green square
-  //       uint8Arr[offset] = 0;
-  //       uint8Arr[offset + 1] = 255;
-  //       uint8Arr[offset + 2] = 0;
-  //       uint8Arr[offset + 3] = 255;
-  //     }
-  //   }
-  // }
-
-  // info("aaaaa")
-  // info(uint8Arr.toString())
-  // info("aaaaa")
-  // await info("haaaaaaaaaaapchooo");
-  // await info(uint8Arr.length.toString());
-  // await info("haaaaaaaaaaapchooo");
-
 
   await send(CHARACTERISTIC_UUID, uint8Arr);
 }

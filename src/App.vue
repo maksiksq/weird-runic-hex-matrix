@@ -161,6 +161,28 @@ watch(connected, async () => {
 
 //
 
+const onNewImg = async (e: Event): Promise<void> => {
+  const file = e.target?.files[0]
+  if (!file) return
+
+  const canvasElem = <HTMLCanvasElement | null>document.getElementById("VueDrawingCanvas");
+  if (!canvasElem) {return}
+
+  const reader = new FileReader()
+  reader.onload = () => {
+    const img = new Image()
+    img.onload = () => {
+      const canvas = canvasElem
+      const ctx = canvas.getContext('2d')
+      canvas.width = img.width
+      canvas.height = img.height
+      ctx?.drawImage(img, 0, 0)
+    }
+    img.src = reader.result
+  }
+  reader.readAsDataURL(file)
+
+};
 </script>
 
 <template>
@@ -187,6 +209,7 @@ watch(connected, async () => {
             <option :value=false>Brush</option>
             <option :value=true>Eraser</option>
           </select>
+          <input type="file" @change="onNewImg" accept="/image"/>
         </div>
         <div ref="canvasContainer" class="canvas-cont">
           <vue-drawing-canvas

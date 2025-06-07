@@ -199,7 +199,7 @@ const onNewImg = async (e: Event): Promise<void> => {
       <button>{{ modeTxt }}</button>
       <button @click.prevent="manuallyResetCanvas">Clear</button>
       <button @click.prevent="initiateBLE">Connect</button>
-      <button @click.prevent="async () => {await sendString(CHARACTERISTIC_UUID, 'abracadabra');}">Shut</button>
+      <button @click.prevent="disconnectFromLock">Shut</button>
       <button @click.prevent="info('hapchooo')"></button>
       <button @click.prevent="sendCanvasImage">send</button>
     </section>

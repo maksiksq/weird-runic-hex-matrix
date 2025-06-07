@@ -115,6 +115,7 @@ class MyCallbacks: public BLEServerCallbacks {
 };
 
 bool runImage = false;
+int imagePartIter = 0;
 
 class MyCharacteristicCallbacks : public BLECharacteristicCallbacks {
   void onWrite(BLECharacteristic *pCharacteristic) {
@@ -149,6 +150,7 @@ class MyCharacteristicCallbacks : public BLECharacteristicCallbacks {
         Serial.printf("%2d: 0x%04X\n", i, processedData[i]);
       }
 
+      imagePartIter++;
       runImage = true;
     } else {
       Serial.println("Not enough data received.");
@@ -230,6 +232,11 @@ void setup() {
 
 int ii = 0;
 
+uint16_t processedData1[2099];
+uint16_t processedData2[2099];
+uint16_t processedData3[2099];
+uint16_t processedData4[2099];
+
 //________________________________________________________________________________VOID LOOP()
 void loop() {
   Serial.println("Looping alive");
@@ -282,8 +289,31 @@ void loop() {
   delay(1000);
 
   if (runImage) {
-    dma_display->drawRGBBitmap(0, 0, processedData, 32, 32);
+    switch (imagePartIter) {
+    case 1:
+    memcpy(processedData1, processedData, sizeof(processedData1));
+    break;
+    case 2:
+    memcpy(processedData2, processedData, sizeof(processedData2));
+    break;
+    case 3:
+    memcpy(processedData3, processedData, sizeof(processedData3));
+    break;
+    case 4:
+    memcpy(processedData4, processedData, sizeof(processedData4));
+    imagePartIter = 0;
+    break;
+    default:
+    Serial.println("Oh noie:");
+    Serial.println(imagePartIter);
+    }
+
+    dma_display->drawRGBBitmap(0, 0, processedData1, 32, 32);
+    dma_display->drawRGBBitmap(32, 0, processedData2, 32, 32);
+    dma_display->drawRGBBitmap(0, 32, processedData3, 32, 32);
+    dma_display->drawRGBBitmap(32, 32, processedData4, 32, 32);
   }
+
 }
 //________________________________________________________________________________
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

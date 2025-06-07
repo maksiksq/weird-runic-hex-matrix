@@ -289,6 +289,9 @@ void loop() {
   delay(1000);
 
   if (runImage) {
+    Serial.println("Entering with:");
+    Serial.println(imagePartIter);
+
     switch (imagePartIter) {
     case 1:
     memcpy(processedData1, processedData, sizeof(processedData1));

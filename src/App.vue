@@ -116,40 +116,42 @@ watch(devices, async () => {
 
 const sendCanvasImage = async () => {
   const canvasElem = <HTMLCanvasElement | null>document.getElementById("VueDrawingCanvas");
-  if (!canvasElem) {return}
+  if (!canvasElem) return;
 
   const ctx = canvasElem.getContext('2d');
-  if (!ctx) {return}
+  if (!ctx) return;
 
-  // downscaling the image
-  const dstCanvas = document.createElement('canvas');
-  dstCanvas.width = 32;
-  dstCanvas.height = 32;
+  // Resize to 64x64
+  const resizedCanvas = document.createElement('canvas');
+  resizedCanvas.width = 64;
+  resizedCanvas.height = 64;
 
-  await info("yeeeeeee");
-  await pica().resize(canvasElem, dstCanvas, {
+  await pica().resize(canvasElem, resizedCanvas, {
     quality: 3,
     alpha: true,
   });
-  await info("yeeeeeee");
 
-  const dstCtx = dstCanvas.getContext('2d');
-  if (!dstCtx) return;
+  const resizedCtx = resizedCanvas.getContext('2d');
+  if (!resizedCtx) return;
 
-  // converting image to a uint8Arr
-  const imageData = dstCtx.getImageData(0, 0, 64, 64);
+  // Splitting the 64x64 canvas into 4 32x32 tiles
+  const tileSize = 32;
 
-  const uint8Arr = new Uint8Array(imageData.data.buffer);
+  for (let row = 0; row < 2; row++) {
+    for (let col = 0; col < 2; col++) {
+      const x = col * tileSize;
+      const y = row * tileSize;
 
+      const tileData = resizedCtx.getImageData(x, y, tileSize, tileSize);
+      const uint8Arr = new Uint8Array(tileData.data.buffer);
 
-  await info("haaaaaaaaaaapchoo");
-  await info(`ImageData length: ${uint8Arr.length}`);
+      await info(`Sending tile at (${x}, ${y}), length: ${uint8Arr.length}`);
+      await send(CHARACTERISTIC_UUID, uint8Arr);
+    }
+  }
 
-  await info(`Ye: ${Array.from(uint8Arr.slice(0, 8)).join(', ')}`);
-  await info("haaaaaaaaaaapchoo")
-
-  await send(CHARACTERISTIC_UUID, uint8Arr);
-}
+  await info("All tiles sent.");
+};
 
 watch(connected, async () => {
   if (connected.value) {

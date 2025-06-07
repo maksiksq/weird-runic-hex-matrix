@@ -123,14 +123,14 @@ class MyCharacteristicCallbacks : public BLECharacteristicCallbacks {
     size_t length = value.length();
 
     Serial.println("Received this initially:");
-    for (size_t i = 0; i < length; i++) {
+    for (size_t i = 0; i < length/16; i++) {
       Serial.printf("%2d: 0x%02X\n", i, data[i]);
     }
 
     Serial.printf("Received %d bytes\n", length);
 
-    if (length >= 32) { 
-      for (size_t i = 0; i < 32; i++) {
+    if (length >= 32*32*4) { 
+      for (size_t i = 0; i < 32*32; i++) {
         uint8_t r = data[i * 4 + 0];
         uint8_t g = data[i * 4 + 1];
         uint8_t b = data[i * 4 + 2];
@@ -282,7 +282,7 @@ void loop() {
   delay(1000);
 
   if (runImage) {
-    dma_display->drawRGBBitmap(0, 0, processedData, 4, 4);
+    dma_display->drawRGBBitmap(0, 0, processedData, 32, 32);
   }
 }
 //________________________________________________________________________________

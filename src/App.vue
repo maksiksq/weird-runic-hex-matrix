@@ -25,10 +25,11 @@ const vueCanvas = ref<VueDrawingCanvas>(null);
 
 const changeMode = (): void => {
   if (modeTxt.value === "Manual") {
-    info("hai");
     modeTxt.value = "Real-time";
+    realTime.value = true;
   } else
   if (modeTxt.value === "Real-time") {
+    realTime.value = false;
     modeTxt.value = "Image";
   } else
   if (modeTxt.value === "Image") {
@@ -77,13 +78,12 @@ let sending = false;
 let shouldSendAgain = false;
 
 async function sendCanvasImageDebounced() {
-  await info("boink")
-  await info(realTime)
-  if (!realTime) {return;}
+  if (!realTime.value) {return;}
   if (sending) {
     shouldSendAgain = true;
     return;
   }
+
 
   sending = true;
 

@@ -11,3 +11,5 @@
 - [ ] FreeRTOS parallelization for actually optimal performance??
 - [ ] Bottom which i band aided with white looks a tad sharper whatever
 - [ ] More splitting, more real time
+- [ ] Disable buttons until connection
+- [ ] Icon

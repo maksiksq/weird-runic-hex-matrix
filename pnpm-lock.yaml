@@ -52,7 +52,7 @@ importers:
         specifier: ^6.0.3
         version: 6.3.5(@types/node@22.15.30)
       vue-drawing-canvas:
-        specifier: ^1.0.8
+        specifier: 1.0.8
         version: 1.0.8(vue@3.5.16(typescript@5.6.3))
       vue-tsc:
         specifier: ^2.1.10

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {onMounted, ref, watch} from "vue";
+// @ts-ignore
 import VueDrawingCanvas from "vue-drawing-canvas";
 import {
   BleDevice,
@@ -7,7 +8,6 @@ import {
   disconnect,
   getConnectionUpdates,
   getScanningUpdates, send,
-  sendString,
   startScan
 } from "@mnlphlp/plugin-blec";
 import {info} from "@tauri-apps/plugin-log";
@@ -232,6 +232,7 @@ const sendCanvasImage = async () => {
 
   await pica().resize(canvasElem, resizedCanvas, {
     quality: 3,
+    // @ts-ignore
     alpha: true,
   });
 
@@ -308,7 +309,7 @@ watch(connected, async () => {
 
 //
 
-const onNewImg = async (e: Event): Promise<void> => {
+const onNewImg = async (e: any): Promise<void> => {
   const file = e.target?.files[0]
   if (!file) return
 
@@ -325,11 +326,19 @@ const onNewImg = async (e: Event): Promise<void> => {
       canvas.height = img.height
       ctx?.drawImage(img, 0, 0)
     }
-    img.src = reader.result
+    img.src = <string>reader?.result;
   }
   reader.readAsDataURL(file)
 
 };
+
+
+// any cause the libraries types are broken
+const strokeType = ref<any>('line');
+const lineCap = ref<any>('square');
+const lineJoin = ref<any>('miter');
+
+
 </script>
 
 <template>
@@ -366,9 +375,9 @@ const onNewImg = async (e: Event): Promise<void> => {
               :line-width="lineSize"
               :color="color"
               :eraser="eraser"
-              :strokeType="line"
-              :line-cap="square"
-              :line-join="miter"
+              :strokeType="strokeType.value"
+              :line-cap="lineCap.value"
+              :line-join="lineJoin.value"
               saveAs="png"/>
         </div>
       </section>

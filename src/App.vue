@@ -60,6 +60,25 @@ const manuallyResetCanvas = (): void => {
 const color = ref<string>()
 const eraser = ref<boolean>(false);
 
+let sending = false;
+let shouldSendAgain = false;
+
+async function sendCanvasImageDebounced() {
+  if (sending) {
+    shouldSendAgain = true;
+    return;
+  }
+
+  sending = true;
+
+  do {
+    shouldSendAgain = false;
+    await sendCanvasImage();
+  } while (shouldSendAgain);
+
+  sending = false;
+}
+
 onMounted(async () => {
   resizeCanvas();
   window.addEventListener("resize", resizeCanvas);
@@ -69,9 +88,9 @@ onMounted(async () => {
     scanning.value = state
   })
 
-  setInterval(async () => {
-    // await sendCanvasImage();
-  }, 1000)
+  setInterval(() => {
+    sendCanvasImageDebounced();
+  }, 200);
 })
 
 //

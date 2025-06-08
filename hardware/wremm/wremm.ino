@@ -130,8 +130,18 @@ bool decompressRawDeflate(const uint8_t* input, size_t inputLength, uint8_t* out
   return true;
 }
 
+unsigned long lastWriteTime = 0;
+const unsigned long debounceDelay = 200; // milliseconds
+
+
 class MyCharacteristicCallbacks : public BLECharacteristicCallbacks {
   void onWrite(BLECharacteristic *pCharacteristic) {
+    unsigned long now = millis();
+    if (now - lastWriteTime < debounceDelay) {
+      Serial.println("Debounced write ignored");
+      return;
+    }
+    lastWriteTime = now;
     String value = pCharacteristic->getValue();
     const uint8_t* data = (const uint8_t*)value.c_str();
     size_t length = value.length();

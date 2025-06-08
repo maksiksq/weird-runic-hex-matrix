@@ -131,7 +131,7 @@ bool decompressRawDeflate(const uint8_t* input, size_t inputLength, uint8_t* out
 }
 
 unsigned long lastWriteTime = 0;
-const unsigned long debounceDelay = 200; // milliseconds
+const unsigned long debounceDelay = 500; // ms
 
 
 class MyCharacteristicCallbacks : public BLECharacteristicCallbacks {

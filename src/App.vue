@@ -88,9 +88,11 @@ onMounted(async () => {
     scanning.value = state
   })
 
+  // a
+
   setInterval(() => {
     sendCanvasImageDebounced();
-  }, 200);
+  }, 500);
 })
 
 //

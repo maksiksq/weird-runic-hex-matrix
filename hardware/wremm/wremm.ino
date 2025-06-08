@@ -113,13 +113,13 @@ class MyCharacteristicCallbacks : public BLECharacteristicCallbacks {
 
     Serial.printf("Received %d bytes\n", length);
 
-    const size_t imageBytes = 32 * 32 * 4;
+    const size_t imageBytes = 32 * 32 * 3;
 
-    if (length >= 4098) {
+    if (length >= 3074) {
       for (size_t i = 0; i < 32 * 32; i++) {
-        uint8_t r = data[i * 4 + 0];
-        uint8_t g = data[i * 4 + 1];
-        uint8_t b = data[i * 4 + 2];
+        uint8_t r = data[i * 3 + 0];
+        uint8_t g = data[i * 3 + 1];
+        uint8_t b = data[i * 3 + 2];
 
         uint16_t rgb565 = ((r & 0xF8) << 8) |
                           ((g & 0xFC) << 3) |

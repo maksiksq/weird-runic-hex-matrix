@@ -13,6 +13,8 @@ import {
 import {info} from "@tauri-apps/plugin-log";
 import pica from "pica"
 
+import { deflateRaw } from 'pako';
+
 const modeTxt = ref('Manual')
 
 const image = ref("");
@@ -68,7 +70,7 @@ onMounted(async () => {
   })
 
   setInterval(async () => {
-    await sendCanvasImage();
+    // await sendCanvasImage();
   }, 1000)
 })
 
@@ -124,6 +126,17 @@ const hashCanvasData = async (data: Uint8Array): Promise<string> => {
   const digest = await crypto.subtle.digest('SHA-1', data);
   return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
 };
+
+const stripAlpha = (data: Uint8Array): Uint8Array => {
+  const rgb = new Uint8Array((data.length / 4) * 3);
+  for (let i = 0, j = 0; i < data.length; i += 4, j += 3) {
+    rgb[j] = data[i];     // R
+    rgb[j + 1] = data[i + 1]; // G
+    rgb[j + 2] = data[i + 2]; // B
+    // notice the lack of alpha here
+  }
+  return rgb;
+}
 
 const pastHashes = new Map<string, string>(); // key = `${row},${col}`
 
@@ -182,11 +195,22 @@ const sendCanvasImage = async () => {
       allTilesUnchanged = false;
       pastHashes.set(key, currentHash);
 
-      const uint8Arr = new Uint8Array(resizedUint8Arr.length + 2);
+      // why not just disable alpha in pico? I still need to compare the vanilla canvas hashes with alpha unless I remake some logic
+      const resizedUint8ArrAlphaless = stripAlpha(resizedUint8Arr);
+      const uint8Arr = new Uint8Array(resizedUint8ArrAlphaless.length + 2);
+      await info("alpha arr:");
+      await info(resizedUint8Arr.toString());
+      await info("alphaless arr:");
+      await info(resizedUint8ArrAlphaless.toString());
+      await info("Arr len:");
+      await info(uint8Arr.length.toString());
+
+      uint8Arr.set(resizedUint8ArrAlphaless);
+      uint8Arr[resizedUint8ArrAlphaless.length] = row;
+      uint8Arr[resizedUint8ArrAlphaless.length + 1] = col;
+
+      await info("sending this arr:");
       await info(uint8Arr.toString());
-      uint8Arr.set(resizedUint8Arr);
-      uint8Arr[resizedUint8Arr.length] = row;
-      uint8Arr[resizedUint8Arr.length + 1] = col;
 
       await info(`Sending changed tile (${x}, ${y}), length: ${uint8Arr.length}`);
       await send(CHARACTERISTIC_UUID, uint8Arr);

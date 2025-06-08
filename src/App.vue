@@ -70,7 +70,7 @@ onMounted(async () => {
   })
 
   setInterval(async () => {
-    // await sendCanvasImage();
+    await sendCanvasImage();
   }, 1000)
 })
 

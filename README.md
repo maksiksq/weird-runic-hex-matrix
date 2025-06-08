@@ -7,7 +7,7 @@ note 1: if you're looking at this as an example for something, do not use Vue-dr
 note 2: shitty code, while I typically follow some practices, this is kinda crap because deadlines, it's not actually bad but beware before copying anything.<br>
 note 3: using Wi-Fi instead of BLE here would make it require so much less optimizations and at least 1.2 times cooler.
 
-![5345862102054727355](https://github.com/user-attachments/assets/879691de-c4c3-46d9-91fd-fdb608a9b98e)
+![Megumin on a led matrix](https://github.com/user-attachments/assets/6090d2fa-2c0d-40d1-b58b-7fd0e92b79e8)
 
 
 ## What's this?

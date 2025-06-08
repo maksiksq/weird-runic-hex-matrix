@@ -73,6 +73,7 @@ const manuallyResetCanvas = (): void => {
 
 const color = ref<string>()
 const eraser = ref<boolean>(false);
+const lineSize = ref<number>(4);
 
 let sending = false;
 let shouldSendAgain = false;
@@ -362,6 +363,7 @@ const onNewImg = async (e: Event): Promise<void> => {
             <option :value=false>Brush</option>
             <option :value=true>Eraser</option>
           </select>
+          <input type="range" v-model="lineSize" class="slider" min="1" max="64" value="4" step="1">
           <input v-if="modeTxt==='Image'" type="file" @change="onNewImg" accept="/image"/>
         </div>
         <div ref="canvasContainer" class="canvas-cont">
@@ -369,6 +371,7 @@ const onNewImg = async (e: Event): Promise<void> => {
               ref="vueCanvas"
               v-model:image="image"
               :line="4"
+              :line-width="lineSize"
               :color="color"
               :eraser="eraser"
               :strokeType="line"
@@ -465,6 +468,10 @@ main {
       & input, select {
         border-radius: 0;
         border: solid black 1px;
+      }
+
+      .slider {
+        width: 20%;
       }
 
       & select {

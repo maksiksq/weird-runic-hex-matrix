@@ -57,6 +57,7 @@ const resizeCanvas = (): void => {
 }
 
 const manuallyResetCanvas = (): void => {
+  resizeCanvas();
   vueCanvas.value?.reset();
 
   const canvasElem = <HTMLCanvasElement | null>document.getElementById("VueDrawingCanvas");
@@ -472,6 +473,7 @@ main {
 
       .slider {
         width: 20%;
+        margin: 0 1% 0 1%;
       }
 
       & select {

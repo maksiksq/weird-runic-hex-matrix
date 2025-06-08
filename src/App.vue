@@ -69,7 +69,7 @@ onMounted(async () => {
 
   setInterval(async () => {
     await sendCanvasImage();
-  }, 500)
+  }, 1000)
 })
 
 //
@@ -116,8 +116,6 @@ watch(devices, async () => {
 
   await sendCanvasImage()
 })
-
-import { createHash } from 'crypto'; // If using Node.js
 
 const hashCanvasData = async (data: Uint8Array): Promise<string> => {
   for (let i = 0; i < data.length; i++) {
@@ -185,6 +183,7 @@ const sendCanvasImage = async () => {
       pastHashes.set(key, currentHash);
 
       const uint8Arr = new Uint8Array(resizedUint8Arr.length + 2);
+      await info(uint8Arr.toString());
       uint8Arr.set(resizedUint8Arr);
       uint8Arr[resizedUint8Arr.length] = row;
       uint8Arr[resizedUint8Arr.length + 1] = col;

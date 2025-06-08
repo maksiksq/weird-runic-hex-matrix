@@ -6,5 +6,6 @@
 - [ ] BUG: (minor): ESP32 struggles to process first image if it's just been powered on (whatever sorta)
 - [ ] BUG: make image canvas an drawing canvas work together somehow
 - [ ] Add more functionality for drawing (size change in particular)
-- [ ] Real time
+- [ ] Real time // tomorrow me, you can probably send the image order alongside the image itself
 - [ ] Maybe wi-fi?
+- [ ] FreeRTOS parallelization for actually optimal performance??

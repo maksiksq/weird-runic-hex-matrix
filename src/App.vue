@@ -69,7 +69,7 @@ onMounted(async () => {
 
   setInterval(async () => {
     await sendCanvasImage();
-  }, 3000)
+  }, 5000)
 })
 
 //
@@ -146,7 +146,16 @@ const sendCanvasImage = async () => {
       const y = row * tileSize;
 
       const tileData = resizedCtx.getImageData(x, y, tileSize, tileSize);
-      const uint8Arr = new Uint8Array(tileData.data.buffer);
+      const uint8ArrNoINdex = new Uint8Array(tileData.data.buffer);
+
+      const uint8Arr = new Uint8Array(uint8ArrNoINdex.length + 2);
+      uint8Arr.set(uint8ArrNoINdex);
+      uint8Arr[uint8ArrNoINdex.length] = row;
+      uint8Arr[uint8ArrNoINdex.length + 1] = col;
+      await info("arr appendix:");
+      await info(uint8Arr.length.toString());
+      // await info(uint8Arr[4097].toString());
+      // await info(uint8Arr[4098].toString());
 
       await info(`Sending tile at (${x}, ${y}), length: ${uint8Arr.length}`);
       await send(CHARACTERISTIC_UUID, uint8Arr);

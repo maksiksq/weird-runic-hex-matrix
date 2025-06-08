@@ -55,23 +55,6 @@ uint16_t myBLUE = dma_display->color565(0, 0, 255);
 uint8_t rawData[] = {0x01, 0x02, 0x03, 0x04}; 
 uint16_t processedData[2099];
 
-void convertUint8ToUint16() {
-  const size_t rawLength = sizeof(rawData);
-
-  // Calculate number of 16-bit values
-  size_t numU16 = rawLength / 2;
-
-  // conversion loop
-
-  for (size_t i = 0; i < numU16; i++) {
-    processedData[i] = (uint16_t)rawData[2 * i] | ((uint16_t)rawData[2 * i + 1] << 8);
-  }
-
-  for (size_t i = 0; i < numU16; i++) {
-    Serial.println(processedData[i], HEX);
-  }
-}
-
 //
 
 //________________________________________________________________________________BLE part
@@ -123,20 +106,21 @@ class MyCharacteristicCallbacks : public BLECharacteristicCallbacks {
     const uint8_t* data = (const uint8_t*)value.c_str();
     size_t length = value.length();
 
-    Serial.println("Received this initially:");
-    for (size_t i = 0; i < length/16; i++) {
-      Serial.printf("%2d: 0x%02X\n", i, data[i]);
-    }
+    // Serial.println("Received this initially:");
+    // for (size_t i = 0; i < length / 32; i++) {
+    //   Serial.printf("%2d: 0x%02X\n", i, data[i]);
+    // }
 
     Serial.printf("Received %d bytes\n", length);
 
-    if (length >= 32*32*4) { 
-      for (size_t i = 0; i < 32*32; i++) {
+    const size_t imageBytes = 32 * 32 * 4;
+
+    if (length >= 4098) {
+      for (size_t i = 0; i < 32 * 32; i++) {
         uint8_t r = data[i * 4 + 0];
         uint8_t g = data[i * 4 + 1];
         uint8_t b = data[i * 4 + 2];
 
-        // Convert to RGB565
         uint16_t rgb565 = ((r & 0xF8) << 8) |
                           ((g & 0xFC) << 3) |
                           (b >> 3);
@@ -144,11 +128,14 @@ class MyCharacteristicCallbacks : public BLECharacteristicCallbacks {
         processedData[i] = rgb565;
       }
 
-      // Print processed data
-      Serial.println("Processed data:");
-      for (size_t i = 0; i < 16; i++) {
-        Serial.printf("%2d: 0x%04X\n", i, processedData[i]);
-      }
+      // Extract last 2 bytes (metadata)
+      processedData[1024] = data[length - 2];
+      processedData[1025] = data[length - 1];
+
+      // Serial.println("Processed data:");
+      // for (size_t i = 0; i < 1026; i++) {
+      //   Serial.printf("%2d: 0x%04X\n", i, processedData[i]);
+      // }
 
       imagePartIter++;
       runImage = true;
@@ -157,6 +144,7 @@ class MyCharacteristicCallbacks : public BLECharacteristicCallbacks {
     }
   }
 };
+
 //
 
 //________________________________________________________________________________VOID SETUP()
@@ -239,10 +227,10 @@ uint16_t processedData4[2099];
 
 //________________________________________________________________________________VOID LOOP()
 void loop() {
-  Serial.println("Looping alive");
-  Serial.println(ii++);
-  dma_display->setTextSize(1);    
-  dma_display->setTextWrap(false);
+  // Serial.println("Looping alive");
+  // Serial.println(ii++);
+  // dma_display->setTextSize(1);    
+  // dma_display->setTextWrap(false);
 
   // //----------------------------------------
   // dma_display->setCursor(10, 0);
@@ -286,37 +274,29 @@ void loop() {
   // dma_display->print("32");
   //----------------------------------------
 
-  delay(1000);
+  delay(200);
 
   if (runImage) {
-    Serial.println("Entering with:");
-    Serial.println(imagePartIter);
-
-    switch (imagePartIter) {
-    case 1:
-    memcpy(processedData1, processedData, sizeof(processedData1));
-    break;
-    case 2:
-    memcpy(processedData2, processedData, sizeof(processedData2));
-    break;
-    case 3:
-    memcpy(processedData3, processedData, sizeof(processedData3));
-    break;
-    case 4:
-    memcpy(processedData4, processedData, sizeof(processedData4));
-    imagePartIter = 0;
-    break;
-    default:
-    Serial.println("Oh noie:");
-    Serial.println(imagePartIter);
+    if (processedData[1024] == 0 && processedData[1025] == 0) {
+      memcpy(processedData1, processedData, sizeof(processedData1));
     }
+    if (processedData[1024] == 0 && processedData[1025] == 1) {
+      memcpy(processedData2, processedData, sizeof(processedData2));
+    }
+    if (processedData[1024] == 1 && processedData[1025] == 0) {
+      memcpy(processedData3, processedData, sizeof(processedData3));
+    }
+    if (processedData[1024] == 1 && processedData[1025] == 1) {
+      memcpy(processedData4, processedData, sizeof(processedData4));
+    }
+    // Serial.println("Entering with:");
+    // Serial.println(imagePartIter);
 
     dma_display->drawRGBBitmap(0, 0, processedData1, 32, 32);
     dma_display->drawRGBBitmap(32, 0, processedData2, 32, 32);
     dma_display->drawRGBBitmap(0, 32, processedData3, 32, 32);
     dma_display->drawRGBBitmap(32, 32, processedData4, 32, 32);
   }
-
 }
 //________________________________________________________________________________
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

@@ -274,7 +274,7 @@ void loop() {
   // dma_display->print("32");
   //----------------------------------------
 
-  delay(200);
+  delay(20);
 
   if (runImage) {
     if (processedData[1024] == 0 && processedData[1025] == 0) {

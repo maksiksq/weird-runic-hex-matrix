@@ -69,7 +69,7 @@ onMounted(async () => {
 
   setInterval(async () => {
     await sendCanvasImage();
-  }, 5000)
+  }, 500)
 })
 
 //
@@ -117,14 +117,25 @@ watch(devices, async () => {
   await sendCanvasImage()
 })
 
+import { createHash } from 'crypto'; // If using Node.js
+
+const hashCanvasData = async (data: Uint8Array): Promise<string> => {
+  for (let i = 0; i < data.length; i++) {
+    data[i] = Math.round(data[i] / 4) * 4; // quantize to 4-bit resolution
+  }
+  const digest = await crypto.subtle.digest('SHA-1', data);
+  return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
+};
+
+const pastHashes = new Map<string, string>(); // key = `${row},${col}`
+
 const sendCanvasImage = async () => {
-  const canvasElem = <HTMLCanvasElement | null>document.getElementById("VueDrawingCanvas");
+  const canvasElem = document.getElementById("VueDrawingCanvas") as HTMLCanvasElement | null;
   if (!canvasElem) return;
 
   const ctx = canvasElem.getContext('2d');
   if (!ctx) return;
 
-  // Resize to 64x64
   const resizedCanvas = document.createElement('canvas');
   resizedCanvas.width = 64;
   resizedCanvas.height = 64;
@@ -137,8 +148,16 @@ const sendCanvasImage = async () => {
   const resizedCtx = resizedCanvas.getContext('2d');
   if (!resizedCtx) return;
 
-  // Splitting the 64x64 canvas into 4 32x32 tiles
+  const vanillaResizedCanvas = document.createElement('canvas');
+  vanillaResizedCanvas.width = 64;
+  vanillaResizedCanvas.height = 64;
+  const vanillaResizedCtx = vanillaResizedCanvas.getContext('2d');
+
+  vanillaResizedCtx?.drawImage(canvasElem, 0, 0, 64, 64);
+
   const tileSize = 32;
+
+  let allTilesUnchanged = true;
 
   for (let row = 0; row < 2; row++) {
     for (let col = 0; col < 2; col++) {
@@ -146,23 +165,39 @@ const sendCanvasImage = async () => {
       const y = row * tileSize;
 
       const tileData = resizedCtx.getImageData(x, y, tileSize, tileSize);
-      const uint8ArrNoINdex = new Uint8Array(tileData.data.buffer);
+      const vanillaResizedTileData = vanillaResizedCtx?.getImageData(x, y, tileSize, tileSize);
 
-      const uint8Arr = new Uint8Array(uint8ArrNoINdex.length + 2);
-      uint8Arr.set(uint8ArrNoINdex);
-      uint8Arr[uint8ArrNoINdex.length] = row;
-      uint8Arr[uint8ArrNoINdex.length + 1] = col;
-      await info("arr appendix:");
-      await info(uint8Arr.length.toString());
-      // await info(uint8Arr[4097].toString());
-      // await info(uint8Arr[4098].toString());
+      if (!vanillaResizedTileData) continue;
 
-      await info(`Sending tile at (${x}, ${y}), length: ${uint8Arr.length}`);
+      const vanillaResizedUint8Arr = new Uint8Array(vanillaResizedTileData.data);
+      const currentHash = await hashCanvasData(vanillaResizedUint8Arr);
+
+      const key = `${row},${col}`;
+      const previousHash = pastHashes.get(key);
+
+      if (currentHash === previousHash) {
+        await info(`Tile (${row}, ${col}) unchanged`);
+        continue;
+      }
+
+      allTilesUnchanged = false;
+      pastHashes.set(key, currentHash);
+
+      const uint8Arr = new Uint8Array(vanillaResizedUint8Arr.length + 2);
+      uint8Arr.set(vanillaResizedUint8Arr);
+      uint8Arr[vanillaResizedUint8Arr.length] = row;
+      uint8Arr[vanillaResizedUint8Arr.length + 1] = col;
+
+      await info(`Sending changed tile (${x}, ${y}), length: ${uint8Arr.length}`);
       await send(CHARACTERISTIC_UUID, uint8Arr);
     }
   }
 
-  await info("All tiles sent.");
+  if (allTilesUnchanged) {
+    await info("All tiles unchanged, no data sent.");
+  } else {
+    await info("All changed tiles sent.");
+  }
 };
 
 watch(connected, async () => {

@@ -274,18 +274,10 @@ const sendCanvasImage = async () => {
       allTilesUnchanged = false;
       pastHashes.set(key, currentHash);
 
-      // no alpha + 2 bytes per pixel (rgb565) + pako gzip
+      // no alpha + 2 bytes per pixel (rgb565) + pako deflate
       // why not just disable alpha in pico? I still need to compare the vanilla canvas hashes with alpha unless I remake some logic
-
       const optimizedUint8Arr = deflateRaw(rgb8ToRgb565(stripAlpha(replaceBlankPixelsWithWhite(resizedUint8Arr))));
       const uint8Arr = new Uint8Array(optimizedUint8Arr.length + 2);
-      // await info("alpha arr:");
-      // await info(resizedUint8Arr.toString());
-      // await info("alphaless arr:");
-      // await info(optimizedUint8Arr.toString());
-      // await info("Arr len:");
-      // await info(uint8Arr.length.toString());
-
       uint8Arr.set(optimizedUint8Arr);
       uint8Arr[optimizedUint8Arr.length] = row;
       uint8Arr[optimizedUint8Arr.length + 1] = col;
@@ -353,8 +345,7 @@ const onNewImg = async (e: Event): Promise<void> => {
       <button @click.prevent="manuallyResetCanvas">Clear</button>
       <button @click.prevent="initiateBLE">Connect</button>
       <button @click.prevent="disconnectFromLock">Shut</button>
-      <button @click.prevent="info('hapchooo')"></button>
-      <button @click.prevent="sendCanvasImage">send</button>
+      <button @click.prevent="sendCanvasImage">Send</button>
     </section>
     <section>
       <section class="canvas-seg">

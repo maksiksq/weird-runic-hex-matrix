@@ -23,6 +23,19 @@ const vueCanvas = ref<VueDrawingCanvas>(null);
 
 // бомбокляд
 
+const changeMode = (): void => {
+  if (modeTxt.value === "Manual") {
+    info("hai");
+    modeTxt.value = "Real-time";
+  } else
+  if (modeTxt.value === "Real-time") {
+    modeTxt.value = "Image";
+  } else
+  if (modeTxt.value === "Image") {
+    modeTxt.value = "Manual";
+  }
+}
+
 const resizeCanvas = (): void => {
   // rip my reactivity
   const canvasElem = <HTMLCanvasElement | null>document.getElementById("VueDrawingCanvas");
@@ -64,6 +77,9 @@ let sending = false;
 let shouldSendAgain = false;
 
 async function sendCanvasImageDebounced() {
+  await info("boink")
+  await info(realTime)
+  if (!realTime) {return;}
   if (sending) {
     shouldSendAgain = true;
     return;
@@ -79,6 +95,17 @@ async function sendCanvasImageDebounced() {
   sending = false;
 }
 
+const realTime = ref(false);
+const ifIntervalStarted = ref(false);
+
+watch(realTime, (): void => {
+  if (ifIntervalStarted.value) {return;}
+  setInterval(() => {
+    sendCanvasImageDebounced();
+  }, 500);
+  ifIntervalStarted.value = true;
+})
+
 onMounted(async () => {
   resizeCanvas();
   window.addEventListener("resize", resizeCanvas);
@@ -87,12 +114,6 @@ onMounted(async () => {
   await getScanningUpdates((state) => {
     scanning.value = state
   })
-
-  // a
-
-  setInterval(() => {
-    sendCanvasImageDebounced();
-  }, 500);
 })
 
 //
@@ -180,6 +201,20 @@ const rgb8ToRgb565 = (rgb8: Uint8Array): Uint8Array => {
   return rgb565;
 }
 
+const replaceBlankPixelsWithWhite = (data: Uint8Array): Uint8Array => {
+  for (let i = 0; i < data.length; i += 4) {
+    const r = data[i];
+    const g = data[i + 1];
+    const b = data[i + 2];
+    if (r === 0 && g === 0 && b === 0) {
+      data[i] = 255;     // R
+      data[i + 1] = 255; // G
+      data[i + 2] = 255; // B
+    }
+  }
+  return data;
+};
+
 const pastHashes = new Map<string, string>(); // key = `${row},${col}`
 
 const sendCanvasImage = async () => {
@@ -237,11 +272,10 @@ const sendCanvasImage = async () => {
       allTilesUnchanged = false;
       pastHashes.set(key, currentHash);
 
-
       // no alpha + 2 bytes per pixel (rgb565) + pako gzip
       // why not just disable alpha in pico? I still need to compare the vanilla canvas hashes with alpha unless I remake some logic
 
-      const optimizedUint8Arr = deflateRaw(rgb8ToRgb565(stripAlpha(resizedUint8Arr)));
+      const optimizedUint8Arr = deflateRaw(rgb8ToRgb565(stripAlpha(replaceBlankPixelsWithWhite(resizedUint8Arr))));
       const uint8Arr = new Uint8Array(optimizedUint8Arr.length + 2);
       // await info("alpha arr:");
       // await info(resizedUint8Arr.toString());
@@ -313,7 +347,7 @@ const onNewImg = async (e: Event): Promise<void> => {
       <p>Status: {{ statusMsg }}</p>
     </section>
     <section class="button-seg">
-      <button>{{ modeTxt }}</button>
+      <button @click.prevent="changeMode">{{ modeTxt }}</button>
       <button @click.prevent="manuallyResetCanvas">Clear</button>
       <button @click.prevent="initiateBLE">Connect</button>
       <button @click.prevent="disconnectFromLock">Shut</button>
@@ -328,7 +362,7 @@ const onNewImg = async (e: Event): Promise<void> => {
             <option :value=false>Brush</option>
             <option :value=true>Eraser</option>
           </select>
-          <input type="file" @change="onNewImg" accept="/image"/>
+          <input v-if="modeTxt==='Image'" type="file" @change="onNewImg" accept="/image"/>
         </div>
         <div ref="canvasContainer" class="canvas-cont">
           <vue-drawing-canvas

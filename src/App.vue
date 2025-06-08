@@ -169,6 +169,7 @@ const sendCanvasImage = async () => {
 
       if (!vanillaResizedTileData) continue;
 
+      const resizedUint8Arr = new Uint8Array(tileData.data);
       const vanillaResizedUint8Arr = new Uint8Array(vanillaResizedTileData.data);
       const currentHash = await hashCanvasData(vanillaResizedUint8Arr);
 
@@ -183,10 +184,10 @@ const sendCanvasImage = async () => {
       allTilesUnchanged = false;
       pastHashes.set(key, currentHash);
 
-      const uint8Arr = new Uint8Array(vanillaResizedUint8Arr.length + 2);
-      uint8Arr.set(vanillaResizedUint8Arr);
-      uint8Arr[vanillaResizedUint8Arr.length] = row;
-      uint8Arr[vanillaResizedUint8Arr.length + 1] = col;
+      const uint8Arr = new Uint8Array(resizedUint8Arr.length + 2);
+      uint8Arr.set(resizedUint8Arr);
+      uint8Arr[resizedUint8Arr.length] = row;
+      uint8Arr[resizedUint8Arr.length + 1] = col;
 
       await info(`Sending changed tile (${x}, ${y}), length: ${uint8Arr.length}`);
       await send(CHARACTERISTIC_UUID, uint8Arr);

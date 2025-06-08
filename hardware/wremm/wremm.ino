@@ -153,8 +153,8 @@ if (decompressRawDeflate(data, length, decompressedData, sizeof(decompressedData
     uint16_t low  = decompressedData[i * 2 + 1];
     processedData[i] = (high << 8) | low;
   }
-  processedData[1024] = 0;
-  processedData[1025] = 0;
+  processedData[1024] = data[length - 2];
+  processedData[1025] = data[length - 1];
   runImage = true;
 } else {
   Serial.println("Decompression failed.");

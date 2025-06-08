@@ -10,3 +10,4 @@
 - [x] (Won't do, no library, too much pain, ble is fine)Maybe wi-fi?
 - [ ] FreeRTOS parallelization for actually optimal performance??
 - [ ] Bottom which i band aided with white looks a tad sharper whatever
+- [ ] More splitting, more real time

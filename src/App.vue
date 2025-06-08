@@ -427,6 +427,7 @@ main {
 
   & .button-seg {
     padding-top: 3%;
+    flex-wrap: wrap;
 
     width: 100%;
 
@@ -454,6 +455,7 @@ main {
       display: flex;
       flex-direction: row;
       justify-content: flex-start;
+      flex-wrap: wrap;
 
       width: 30vw;
 

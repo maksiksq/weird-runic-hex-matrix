@@ -13,7 +13,7 @@ import {
 import {info} from "@tauri-apps/plugin-log";
 import pica from "pica"
 
-import { deflateRaw } from 'pako';
+import {deflateRaw} from 'pako';
 
 const modeTxt = ref('Manual')
 
@@ -70,7 +70,7 @@ onMounted(async () => {
   })
 
   setInterval(async () => {
-    await sendCanvasImage();
+    // await sendCanvasImage();
   }, 1000)
 })
 
@@ -216,8 +216,11 @@ const sendCanvasImage = async () => {
       allTilesUnchanged = false;
       pastHashes.set(key, currentHash);
 
+
+      // no alpha + 2 bytes per pixel (rgb565) + pako gzip
       // why not just disable alpha in pico? I still need to compare the vanilla canvas hashes with alpha unless I remake some logic
-      const optimizedUint8Arr = rgb8ToRgb565(stripAlpha(resizedUint8Arr));
+
+      const optimizedUint8Arr = deflateRaw(rgb8ToRgb565(stripAlpha(resizedUint8Arr)));
       const uint8Arr = new Uint8Array(optimizedUint8Arr.length + 2);
       // await info("alpha arr:");
       // await info(resizedUint8Arr.toString());
@@ -230,9 +233,10 @@ const sendCanvasImage = async () => {
       uint8Arr[optimizedUint8Arr.length] = row;
       uint8Arr[optimizedUint8Arr.length + 1] = col;
 
-      await info("sending this arr:");
-      await info(uint8Arr.toString());
+      // await info("sending this arr:");
+      // await info(uint8Arr.toString());
 
+      await info(`Compressed from ${rgb8ToRgb565(stripAlpha(resizedUint8Arr)).length} to ${uint8Arr.length} bytes`);
       await info(`Sending changed tile (${x}, ${y}), length: ${uint8Arr.length}`);
       await send(CHARACTERISTIC_UUID, uint8Arr);
     }

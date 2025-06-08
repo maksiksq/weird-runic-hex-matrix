@@ -1,6 +1,7 @@
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 01_Showing_Text
 //----------------------------------------Including the libraries.
 #include <ESP32-HUB75-MatrixPanel-I2S-DMA.h>
+#include "zlib.h"
 //----------------------------------------
 
 //----------------------------------------Defines the connected PIN between P5 and ESP32.
@@ -100,6 +101,35 @@ class MyCallbacks: public BLEServerCallbacks {
 bool runImage = false;
 int imagePartIter = 0;
 
+#include <zlib.h>
+
+bool decompressRawDeflate(const uint8_t* input, size_t inputLength, uint8_t* output, size_t outputLength) {
+  z_stream stream;
+  stream.zalloc = Z_NULL;
+  stream.zfree = Z_NULL;
+  stream.opaque = Z_NULL;
+  stream.avail_in = inputLength;
+  stream.next_in = (Bytef*)input;
+  stream.avail_out = outputLength;
+  stream.next_out = output;
+
+  // Use -MAX_WBITS to indicate raw DEFLATE stream (no zlib/gzip headers)
+  if (inflateInit2(&stream, -MAX_WBITS) != Z_OK) {
+    Serial.println("inflateInit2 failed");
+    return false;
+  }
+
+  int ret = inflate(&stream, Z_FINISH);
+  if (ret != Z_STREAM_END) {
+    Serial.printf("inflate failed: %d\n", ret);
+    inflateEnd(&stream);
+    return false;
+  }
+
+  inflateEnd(&stream);
+  return true;
+}
+
 class MyCharacteristicCallbacks : public BLECharacteristicCallbacks {
   void onWrite(BLECharacteristic *pCharacteristic) {
     String value = pCharacteristic->getValue();
@@ -113,30 +143,23 @@ class MyCharacteristicCallbacks : public BLECharacteristicCallbacks {
 
     Serial.printf("Received %d bytes\n", length);
 
-    const size_t imageBytes = 32 * 32 * 3;
+    uint8_t decompressedData[2048]; // adjust size based on expected output
 
-    if (length >= 32 * 32 * 2 + 2) {
-    for (size_t i = 0; i < 32 * 32; i++) {
-      uint16_t high = data[i * 2];     // High byte
-      uint16_t low  = data[i * 2 + 1]; // Low byte
-      processedData[i] = (high << 8) | low;
-    }
-
-      // Extract last 2 bytes (metadata)
-      processedData[1024] = data[length - 2];
-      processedData[1025] = data[length - 1];
-
-      // Serial.println("Processed data:");
-      // for (size_t i = 0; i < 1026; i++) {
-      //   Serial.printf("%2d: 0x%04X\n", i, processedData[i]);
-      // }
-
-      imagePartIter++;
-      runImage = true;
-    } else {
-      Serial.println("Not enough data received.");
-    }
+if (decompressRawDeflate(data, length, decompressedData, sizeof(decompressedData))) {
+  Serial.println("Decompression successful!");
+  // Now convert decompressedData to 16-bit processedData array
+  for (size_t i = 0; i < 1024; i++) {
+    uint16_t high = decompressedData[i * 2];
+    uint16_t low  = decompressedData[i * 2 + 1];
+    processedData[i] = (high << 8) | low;
   }
+  processedData[1024] = 0;
+  processedData[1025] = 0;
+  runImage = true;
+} else {
+  Serial.println("Decompression failed.");
+}
+}
 };
 
 //

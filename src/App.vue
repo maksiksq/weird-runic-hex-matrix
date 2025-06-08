@@ -138,6 +138,27 @@ const stripAlpha = (data: Uint8Array): Uint8Array => {
   return rgb;
 }
 
+const rgb8ToRgb565 = (rgb8: Uint8Array): Uint8Array => {
+  const length = rgb8.length / 3;
+  const rgb565 = new Uint8Array(length * 2);
+
+  for (let i = 0; i < length; i++) {
+    const r = rgb8[i * 3];
+    const g = rgb8[i * 3 + 1];
+    const b = rgb8[i * 3 + 2];
+
+    const rgb =
+        ((r & 0b11111000) << 8) |
+        ((g & 0b11111100) << 3) |
+        (b >> 3);
+
+    rgb565[i * 2] = (rgb >> 8) & 0xFF;     // High byte
+    rgb565[i * 2 + 1] = rgb & 0xFF;        // Low byte
+  }
+
+  return rgb565;
+}
+
 const pastHashes = new Map<string, string>(); // key = `${row},${col}`
 
 const sendCanvasImage = async () => {
@@ -196,18 +217,18 @@ const sendCanvasImage = async () => {
       pastHashes.set(key, currentHash);
 
       // why not just disable alpha in pico? I still need to compare the vanilla canvas hashes with alpha unless I remake some logic
-      const resizedUint8ArrAlphaless = stripAlpha(resizedUint8Arr);
-      const uint8Arr = new Uint8Array(resizedUint8ArrAlphaless.length + 2);
-      await info("alpha arr:");
-      await info(resizedUint8Arr.toString());
-      await info("alphaless arr:");
-      await info(resizedUint8ArrAlphaless.toString());
-      await info("Arr len:");
-      await info(uint8Arr.length.toString());
+      const optimizedUint8Arr = rgb8ToRgb565(stripAlpha(resizedUint8Arr));
+      const uint8Arr = new Uint8Array(optimizedUint8Arr.length + 2);
+      // await info("alpha arr:");
+      // await info(resizedUint8Arr.toString());
+      // await info("alphaless arr:");
+      // await info(optimizedUint8Arr.toString());
+      // await info("Arr len:");
+      // await info(uint8Arr.length.toString());
 
-      uint8Arr.set(resizedUint8ArrAlphaless);
-      uint8Arr[resizedUint8ArrAlphaless.length] = row;
-      uint8Arr[resizedUint8ArrAlphaless.length + 1] = col;
+      uint8Arr.set(optimizedUint8Arr);
+      uint8Arr[optimizedUint8Arr.length] = row;
+      uint8Arr[optimizedUint8Arr.length + 1] = col;
 
       await info("sending this arr:");
       await info(uint8Arr.toString());

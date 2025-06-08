@@ -115,18 +115,12 @@ class MyCharacteristicCallbacks : public BLECharacteristicCallbacks {
 
     const size_t imageBytes = 32 * 32 * 3;
 
-    if (length >= 3074) {
-      for (size_t i = 0; i < 32 * 32; i++) {
-        uint8_t r = data[i * 3 + 0];
-        uint8_t g = data[i * 3 + 1];
-        uint8_t b = data[i * 3 + 2];
-
-        uint16_t rgb565 = ((r & 0xF8) << 8) |
-                          ((g & 0xFC) << 3) |
-                          (b >> 3);
-
-        processedData[i] = rgb565;
-      }
+    if (length >= 32 * 32 * 2 + 2) {
+    for (size_t i = 0; i < 32 * 32; i++) {
+      uint16_t high = data[i * 2];     // High byte
+      uint16_t low  = data[i * 2 + 1]; // Low byte
+      processedData[i] = (high << 8) | low;
+    }
 
       // Extract last 2 bytes (metadata)
       processedData[1024] = data[length - 2];

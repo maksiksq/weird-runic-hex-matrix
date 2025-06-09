@@ -23,3 +23,5 @@ Because no one invented a wi-fi library for Tauri yet and I have no idea if webs
 
 *Name note:
 I'm aware hex starts with h and not e, you see it's an acronym with partial syllabic selection, not just an acronym.*
+*Icon note:
+Don't think about it, and it won't haunt you (it's an inside joke you won't get it)*

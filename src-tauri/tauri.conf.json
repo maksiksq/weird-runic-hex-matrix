@@ -13,11 +13,14 @@
     "windows": [
       {
         "title": "runic-matrix",
+        "width": 1200,
+        "height": 700,
+        "fullscreen": false,
         "maximized": true
       }
     ],
     "security": {
-      "csp": null
+      "csp": ""
     }
   },
   "bundle": {
@@ -30,5 +33,6 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ]
-  }
+  },
+  "plugins": {}
 }

@@ -5,11 +5,11 @@
 - [ ] BUG: sending transparency data through ble, could resize payload size by like 25%
 - [x] BUG: (this was not minor at all): ESP32 struggles to process first image if it's just been powered on (whatever sorta)
 - [ ] BUG: make image canvas an drawing canvas work together somehow
-- [ ] Add more functionality for drawing (size change in particular)
+- [x] Add more functionality for drawing (size change in particular)
 - [x] Real time // tomorrow me, you can probably send the image order alongside the image itself
-- [x] (Won't do, no library, too much pain, ble is fine)Maybe wi-fi?
+- [x] (Won't do, no library, too much pain, ble is fine) Maybe wi-fi?
 - [ ] FreeRTOS parallelization for actually optimal performance??
 - [ ] Bottom which i band aided with white looks a tad sharper whatever
 - [ ] More splitting, more real time
 - [ ] Disable buttons until connection
-- [ ] Icon
+- [x] Icon

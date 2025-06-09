@@ -254,53 +254,6 @@ uint16_t processedData4[2099];
 
 //________________________________________________________________________________VOID LOOP()
 void loop() {
-  // Serial.println("Looping alive");
-  // Serial.println(ii++);
-  // dma_display->setTextSize(1);    
-  // dma_display->setTextWrap(false);
-
-  // //----------------------------------------
-  // dma_display->setCursor(10, 0);
-  // dma_display->setTextColor(dma_display->color565(255, 153, 0));
-  // dma_display->println("UTEH");
-
-  // dma_display->setCursor(36, 0);
-  // dma_display->setTextColor(dma_display->color565(255, 0, 255));
-  // dma_display->print("STR");
-  // //----------------------------------------
-
-  // //----------------------------------------
-  // dma_display->setCursor(11, 8);
-  // dma_display->setTextColor(dma_display->color565(0, 152, 158));
-  // dma_display->println("ARDUINO");
-  // //----------------------------------------
-
-  // //----------------------------------------
-  // dma_display->setCursor(16, 17);
-  // dma_display->setTextColor(dma_display->color565(255, 255, 255));
-  // dma_display->print("P5");
-
-  // dma_display->setCursor(30, 17);
-  // dma_display->setTextColor(dma_display->color565(255, 0, 0));
-  // dma_display->print("R");
-  
-  // dma_display->setTextColor(dma_display->color565(0, 255, 0));
-  // dma_display->print("G");
-
-  // dma_display->setTextColor(dma_display->color565(0, 0, 255));
-  // dma_display->print("B");
-  // //----------------------------------------
-
-  // //----------------------------------------
-  // dma_display->setCursor(16, 25);
-  // dma_display->setTextColor(dma_display->color565(255, 0, 102));
-  // dma_display->print("ESP");
-
-  // dma_display->setCursor(36, 27);
-  // dma_display->setTextColor(dma_display->color565(241, 197, 7));
-  // dma_display->print("32");
-  //----------------------------------------
-
   delay(20);
 
   if (runImage) {

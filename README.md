@@ -6,6 +6,7 @@ college summoned me to make an app once again
 note 1: if you're looking at this as an example for something, do not use Vue-drawing-canvas, it's unmaintained. You can use Konva instead, they even have an example, although it's more difficult to implement, you also get more freedom in terms of manipulating the canvas.<br>
 note 2: shitty code, while I typically follow some practices, this is kinda crap because deadlines, it's not actually bad but beware before copying anything.<br>
 note 3: using Wi-Fi instead of BLE here would make it require so much less optimizations and at least 1.2 times cooler.
+note 4: android version works but is unfinished
 
 ![Megumin on a led matrix](https://github.com/user-attachments/assets/6090d2fa-2c0d-40d1-b58b-7fd0e92b79e8)
 

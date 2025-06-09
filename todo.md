@@ -13,3 +13,4 @@
 - [ ] More splitting, more real time
 - [ ] Disable buttons until connection
 - [x] Icon
+- [ ] BUG: Tauri android build doesn't work except that one time when I enabled the backtrace and it magically worked

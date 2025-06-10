@@ -45,7 +45,6 @@ const resizeCanvas = (): void => {
   const img = new Image();
   img.src = image.value;
 
-
   canvasElem.width = window.innerWidth * 0.30;
   canvasElem.height = window.innerWidth * 0.30;
 
@@ -142,8 +141,6 @@ const initiateBLE = async (): Promise<void> => {
 }
 
 watch(devices, async () => {
-  console.log("haaaaaaaaaaapchoo");
-
   if (devices.value.length === 0) {
     statusMsg.value = "scan resulted in nothing";
   }

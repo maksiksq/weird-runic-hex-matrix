@@ -11,7 +11,7 @@ import {
   startScan
 } from "@mnlphlp/plugin-blec";
 import {info} from "@tauri-apps/plugin-log";
-import pica from "pica"
+import pica from "pica";
 
 import {deflateRaw} from 'pako';
 

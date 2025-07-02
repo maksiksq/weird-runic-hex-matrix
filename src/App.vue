@@ -110,6 +110,12 @@ watch(realTime, (): void => {
 onMounted(async () => {
   resizeCanvas();
   window.addEventListener("resize", resizeCanvas);
+  document.addEventListener("keydown", async (e: KeyboardEvent): Promise<void> => {
+    if (e.ctrlKey && e.key === 'z') {
+      await vueCanvas.value.undo();
+      e.preventDefault();
+    }
+  });
 
   await getConnectionUpdates((state) => connected.value = state)
   await getScanningUpdates((state) => {

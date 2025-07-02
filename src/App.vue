@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onMounted, ref, watch} from "vue";
+import {onMounted, onBeforeUnmount, ref, watch} from "vue";
 // @ts-ignore
 import VueDrawingCanvas from "vue-drawing-canvas";
 import {
@@ -116,6 +116,10 @@ onMounted(async () => {
     scanning.value = state
   })
 })
+
+onBeforeUnmount(() => {
+  window.removeEventListener("resize", resizeCanvas);
+});
 
 //
 
@@ -334,6 +338,9 @@ const onNewImg = async (e: any): Promise<void> => {
 const strokeType = ref<any>('line');
 const lineCap = ref<any>('square');
 const lineJoin = ref<any>('miter');
+
+//
+
 
 
 </script>

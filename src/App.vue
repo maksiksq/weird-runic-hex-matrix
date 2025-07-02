@@ -415,7 +415,7 @@ main {
   }
 
   & .text-head {
-    padding-top: 5%;
+    padding-top: 2%;
 
     & h1 {
       font-size: 1rem;
@@ -431,7 +431,7 @@ main {
   }
 
   & .button-seg {
-    padding-top: 3%;
+    padding-top: 1%;
     flex-wrap: wrap;
 
     width: 100%;
@@ -452,7 +452,7 @@ main {
     flex-direction: column;
     align-items: center;
 
-    padding-top: 3%;
+    padding-top: 1%;
 
     width: 100%;
 

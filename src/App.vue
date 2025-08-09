@@ -352,6 +352,14 @@ const lineJoin = ref<any>('miter');
 </script>
 
 <template>
+  <div class="som">
+    <p>Video for SoM reviewers:<br>
+      You're doing a good job, keep going!
+    </p>
+    <video src="/vid.mp4" muted autoplay controls>hmmm
+    </video>
+  </div>
+
   <main>
     <section class="text-head">
       <h1>Weird runic hex matrix</h1>
@@ -401,6 +409,27 @@ const lineJoin = ref<any>('miter');
 
   margin: 0;
   padding: 0;
+}
+
+.som {
+  position: fixed;
+  z-index: 1000;
+  left: 50px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  p {
+    padding: 10px 0;
+  }
+
+  @media only screen and (max-width: 600px) {
+    display: none;
+  }
+
+  & video {
+    width: 20vw;
+    height: 20vh;
+  }
 }
 
 body, html {

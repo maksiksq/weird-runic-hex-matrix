@@ -27,12 +27,10 @@ const changeMode = (): void => {
   if (modeTxt.value === "Manual") {
     modeTxt.value = "Real-time";
     realTime.value = true;
-  } else
-  if (modeTxt.value === "Real-time") {
+  } else if (modeTxt.value === "Real-time") {
     realTime.value = false;
     modeTxt.value = "Image";
-  } else
-  if (modeTxt.value === "Image") {
+  } else if (modeTxt.value === "Image") {
     modeTxt.value = "Manual";
   }
 }
@@ -40,7 +38,9 @@ const changeMode = (): void => {
 const resizeCanvas = (): void => {
   // rip my reactivity
   const canvasElem = <HTMLCanvasElement | null>document.getElementById("VueDrawingCanvas");
-  if (!canvasElem) {return}
+  if (!canvasElem) {
+    return
+  }
 
   const img = new Image();
   img.src = image.value;
@@ -60,11 +60,15 @@ const manuallyResetCanvas = (): void => {
   vueCanvas.value?.reset();
 
   const canvasElem = <HTMLCanvasElement | null>document.getElementById("VueDrawingCanvas");
-  if (!canvasElem) {return}
+  if (!canvasElem) {
+    return
+  }
 
   const ctx = canvasElem.getContext('2d');
 
-  if (!ctx) {return}
+  if (!ctx) {
+    return
+  }
 
   ctx.fillStyle = '#fff';
   ctx.fillRect(0, 0, canvasElem.width, canvasElem.height);
@@ -79,7 +83,9 @@ let sending = false;
 let shouldSendAgain = false;
 
 async function sendCanvasImageDebounced() {
-  if (!realTime.value) {return;}
+  if (!realTime.value) {
+    return;
+  }
   if (sending) {
     shouldSendAgain = true;
     return;
@@ -100,7 +106,9 @@ const realTime = ref(false);
 const ifIntervalStarted = ref(false);
 
 watch(realTime, (): void => {
-  if (ifIntervalStarted.value) {return;}
+  if (ifIntervalStarted.value) {
+    return;
+  }
   setInterval(() => {
     sendCanvasImageDebounced();
   }, 500);
@@ -147,7 +155,9 @@ async function disconnectFromLock() {
 const initiateBLE = async (): Promise<void> => {
   await disconnectFromLock();
 
-  await startScan((dv: BleDevice[]) => {devices.value = dv;}, 10000);
+  await startScan((dv: BleDevice[]) => {
+    devices.value = dv;
+  }, 10000);
 }
 
 watch(devices, async () => {
@@ -321,7 +331,9 @@ const onNewImg = async (e: any): Promise<void> => {
   if (!file) return
 
   const canvasElem = <HTMLCanvasElement | null>document.getElementById("VueDrawingCanvas");
-  if (!canvasElem) {return}
+  if (!canvasElem) {
+    return
+  }
 
   const reader = new FileReader()
   reader.onload = () => {
@@ -346,7 +358,6 @@ const lineCap = ref<any>('square');
 const lineJoin = ref<any>('miter');
 
 //
-
 
 
 </script>
@@ -383,7 +394,7 @@ const lineJoin = ref<any>('miter');
             <option :value=true>Eraser</option>
           </select>
           <input type="range" v-model="lineSize" class="slider" min="1" max="64" value="4" step="1">
-          <label v-if="modeTxt==='Image'" for="img-input" class="img-input-label" >
+          <label v-if="modeTxt==='Image'" for="img-input" class="img-input-label">
             📂 Select an image
           </label>
           <input v-if="modeTxt==='Image'" id="img-input" type="file" @change="onNewImg" accept="/image"/>
@@ -422,6 +433,7 @@ body, html {
 ::selection {
   background: oklch(0.6956 0.2047 20.75);
 }
+
 button, a {
   all: unset;
 }
@@ -521,13 +533,14 @@ main {
       flex-wrap: wrap;
 
       width: 30vw;
+      margin-bottom: 0.3rem;
 
       & input, select {
         border-radius: 0;
         border: solid black 1px;
       }
 
-      .slider {
+      & .slider {
         width: 20%;
         margin: 0 1% 0 1%;
       }

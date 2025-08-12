@@ -356,7 +356,7 @@ const lineJoin = ref<any>('miter');
     <p>Video for SoM reviewers:<br>
       You're doing a good job, keep going!
     </p>
-    <video src="/vid.mp4" muted autoplay controls>hmmm
+    <video src="/vid.mp4" muted autoplay controls>som review video
     </video>
   </div>
 
@@ -383,7 +383,10 @@ const lineJoin = ref<any>('miter');
             <option :value=true>Eraser</option>
           </select>
           <input type="range" v-model="lineSize" class="slider" min="1" max="64" value="4" step="1">
-          <input v-if="modeTxt==='Image'" type="file" @change="onNewImg" accept="/image"/>
+          <label v-if="modeTxt==='Image'" for="img-input" class="img-input-label" >
+            📂 Select an image
+          </label>
+          <input v-if="modeTxt==='Image'" id="img-input" type="file" @change="onNewImg" accept="/image"/>
         </div>
         <div ref="canvasContainer" class="canvas-cont">
           <vue-drawing-canvas
@@ -411,6 +414,34 @@ const lineJoin = ref<any>('miter');
   padding: 0;
 }
 
+body, html {
+  overflow: hidden;
+  background-color: rgba(29, 29, 33, 1);
+}
+
+::selection {
+  background: oklch(0.6956 0.2047 20.75);
+}
+button, a {
+  all: unset;
+}
+</style>
+<style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap');
+
+#img-input {
+  display: none;
+}
+
+.img-input-label {
+  border-radius: 0;
+  border: solid black 1px;
+  background-color: white;
+  color: black;
+  margin-left: 0.6rem;
+  padding: 0 0.6rem 0 0.2rem;
+}
+
 .som {
   position: fixed;
   z-index: 1000;
@@ -431,21 +462,6 @@ const lineJoin = ref<any>('miter');
     height: 20vh;
   }
 }
-
-body, html {
-  overflow: hidden;
-  background-color: rgba(29, 29, 33, 1);
-}
-
-::selection {
-  background: oklch(0.6956 0.2047 20.75);
-}
-button, a {
-  all: unset;
-}
-</style>
-<style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap');
 
 main {
   height: 100%;
